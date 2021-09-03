@@ -1,0 +1,7 @@
+{
+  "name": "advent-of-code-2021",
+  "version": "1.0.0",
+  "description": "Advent of Code 2021 solutions",
+  "main": "index.js",
+  "license": "MIT"
+}
