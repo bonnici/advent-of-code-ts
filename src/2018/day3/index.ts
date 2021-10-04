@@ -1,6 +1,6 @@
 import { Solver } from "../../common/Solver";
 import { InputParser}  from "../../common/InputParser";
-import CharGrid from "../../common/CharGrid";
+import GenericGrid from "../../common/GenericGrid";
 
 interface Claim {
   claimId: number;
@@ -15,15 +15,17 @@ const inputRe = /#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/;
 
 export default class Day3Solver extends Solver {
   private claims: Array<Claim> = [];
-  private grid: CharGrid = new CharGrid(0, 0);
-
+  // private grid: CharGrid = new CharGrid(0, 0);
+  private grid = new GenericGrid<string>(0, 0, '.');
 
   public init(inputFile: string) {
     this.claims = InputParser.readLines(inputFile).map(Day3Solver.mapInput);
 
     const gridWidth = this.claims.reduce((acc, cur) => Math.max(acc, cur.fromLeft + cur.width), 0);
     const gridHeight = this.claims.reduce((acc, cur) => Math.max(acc, cur.fromTop + cur.height), 0);
-    this.grid = new CharGrid(gridWidth, gridHeight);
+
+    const compareFn = (a: string, b: string) => a.localeCompare(b);
+    this.grid = new GenericGrid<string>(gridWidth, gridHeight, '.', compareFn, a => a);
   }
 
   protected solvePart1(): string {

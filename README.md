@@ -26,3 +26,7 @@ To debug through IntelliJ see
 Each solution is implemented as a subclass of the `Solver` class, which provides some shared functionality (e.g. logging 
 and progress bars) and a standard interface to implement. The `InputParser` static functions can be used to perform 
 various manipulations of the input files.
+
+TODO
+* replace TSLint with ESLint or whatever is recommended now
+* add prettier
