@@ -1,7 +1,26 @@
 {
-  "name": "advent-of-code-2021",
+  "name": "advent-of-code-ts",
   "version": "1.0.0",
-  "description": "Advent of Code 2021 solutions",
-  "main": "index.js",
-  "license": "MIT"
+  "description": "Advent of Code TypeScript solutions",
+  "license": "MIT",
+  "scripts": {
+    "cli": "npx ts-node src/common/CliDriver.ts",
+    "day3Sample": "npx ts-node src/2020/day3/index.ts src/2020/day3/sample.txt 1 src/2020/day3/sample.p1.expected.txt",
+    "day4Part2": "VERBOSE=1 npx ts-node src/day4/index.ts src/2020/day4/input.txt 2",
+    "scaffoldDay5": "npx ts-node src/common/Scaffolder.ts 2020 5"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.9.2",
+    "@types/inquirer": "^7.3.3",
+    "@types/node": "^16.7.10",
+    "ts-node": "^10.2.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-progress": "^3.9.0",
+    "handlebars": "^4.7.7",
+    "inquirer": "^8.1.2"
+  }
 }
