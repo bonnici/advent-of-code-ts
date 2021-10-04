@@ -17,7 +17,7 @@ export class InputParser {
     return InputParser.readLines(path).map(line => line.split(''));
   }
 
-  public static readLinesWithTransform(path: string, transform: (line: string) => any): any[] {
+  public static readLinesWithTransform<Type>(path: string, transform: (line: string) => Type): Type[] {
     return InputParser.readLines(path).map(line => transform(line));
   }
 

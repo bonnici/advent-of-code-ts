@@ -1,10 +1,10 @@
 import { Solver } from "../../common/Solver";
 import { InputParser}  from "../../common/InputParser";
 
-export default class Day1Solver extends Solver {
+class Day1Solver extends Solver {
   private input: Array<number> = [];
 
-  public init(inputFile: string) {
+  public init(inputFile: string): void {
     this.input = InputParser.readLinesAsInts(inputFile);
   }
 
@@ -20,7 +20,7 @@ export default class Day1Solver extends Solver {
     let result = 0;
     let curIdx = 0;
     const seen = new Set();
-    while (true) {
+    for (;;) {
       this.reportProgress(curIdx);
       if (seen.has(result)) {
         this.stopProgress();

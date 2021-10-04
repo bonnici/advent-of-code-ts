@@ -86,10 +86,10 @@ class PassportFields {
   }
 }
 
-export default class Day4Solver extends Solver {
-  private input: any;
+class Day4Solver extends Solver {
+  private input: Array<string> = []
 
-  public init(inputFile: string) {
+  public init(inputFile: string): void {
     this.input = InputParser.readLines(inputFile);
   }
 

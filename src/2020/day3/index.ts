@@ -1,10 +1,10 @@
 import { Solver } from "../../common/Solver";
 import { InputParser}  from "../../common/InputParser";
 
-export default class Day3Solver extends Solver {
-  private input: any;
+class Day3Solver extends Solver {
+  private input: Array<string> = []
 
-  public init(inputFile: string) {
+  public init(inputFile: string): void {
     this.input = InputParser.readLines(inputFile);
   }
 

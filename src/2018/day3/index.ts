@@ -13,12 +13,11 @@ interface Claim {
 // #123 @ 3,2: 5x4
 const inputRe = /#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/;
 
-export default class Day3Solver extends Solver {
+class Day3Solver extends Solver {
   private claims: Array<Claim> = [];
-  // private grid: CharGrid = new CharGrid(0, 0);
   private grid = new GenericGrid<string>(0, 0, '.');
 
-  public init(inputFile: string) {
+  public init(inputFile: string): void {
     this.claims = InputParser.readLines(inputFile).map(Day3Solver.mapInput);
 
     const gridWidth = this.claims.reduce((acc, cur) => Math.max(acc, cur.fromLeft + cur.width), 0);

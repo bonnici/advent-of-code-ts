@@ -35,7 +35,7 @@ export abstract class Solver {
     return { result, timeTaken: timeAfter - timeBefore };
   }
 
-  public solveForArgs() {
+  public solveForArgs(): void {
     const args = process.argv.slice(2);
     const fileName = args[0] || 'input';
     const part = args[1] || '1';
@@ -58,18 +58,18 @@ export abstract class Solver {
     }
   }
 
-  protected verboseLog() {
+  protected verboseLog(...args: string[]): void {
     if (process.env.VERBOSE) {
-      console.log(...arguments);
+      console.log(args);
     }
   }
 
-  protected initProgress(maxValue: number) {
+  protected initProgress(maxValue: number): void {
     this.progressBarMaxValue = maxValue;
     this.progressBar.start(this.progressBarMaxValue, 0);
   }
 
-  protected reportProgress(value: number) {
+  protected reportProgress(value: number): void {
     this.progressBar.update(value);
 
     if (value >= this.progressBarMaxValue) {
@@ -77,11 +77,11 @@ export abstract class Solver {
     }
   }
 
-  protected stopProgress() {
+  protected stopProgress(): void {
     this.progressBar.stop();
   }
 
-  protected incrementProgress() {
+  protected incrementProgress(): void {
     this.progressBar.increment();
   }
 }

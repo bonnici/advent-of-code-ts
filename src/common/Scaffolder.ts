@@ -11,10 +11,10 @@ const indexTemplate = Handlebars.compile(`
 import { Solver } from "../../common/Solver";
 import { InputParser}  from "../../common/InputParser";
 
-export default class Day{{day}}Solver extends Solver {
-  private input: any = []; // todo proper typing
+class Day{{day}}Solver extends Solver {
+  private input: Array<any> = [];
 
-  public init(inputFile: string) {
+  public init(inputFile: string): void {
     this.input = InputParser.readLines(inputFile);
   }
 
@@ -31,7 +31,7 @@ new Day{{day}}Solver().solveForArgs();
 `);
 
 export default class Scaffolder {
-  public static scaffold(year: number, day: number) {
+  public static scaffold(year: number, day: number): void {
     const readmeContent = readmeTemplate({ year, day }).trim();
     const indexContent = indexTemplate({ year, day }).trim();
 

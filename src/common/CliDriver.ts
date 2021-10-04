@@ -7,10 +7,10 @@ export class CliDriver {
   private verbose = false;
   private lastMainOption = 'p1';
 
-  public async run(yearOverride: number | undefined) {
-    while (true) {
-      let currentYear = yearOverride || this.detectCurrentYear();
-      let currentDay = this.detectCurrentDay(currentYear);
+  public async run(yearOverride: number | undefined): Promise<void> {
+    for (;;) {
+      const currentYear = yearOverride || CliDriver.detectCurrentYear();
+      const currentDay = CliDriver.detectCurrentDay(currentYear);
       const mainOption = await this.promptMainOption(currentYear, currentDay);
       switch (mainOption) {
         case 'p1':
@@ -29,21 +29,21 @@ export class CliDriver {
           await this.promptSolution(currentYear, currentDay);
           break;
         case 'next':
-          await this.scaffold(currentYear, currentDay + 1);
+          await CliDriver.scaffold(currentYear, currentDay + 1);
           break;
         case 'scaffold':
-          await this.promptScaffold(currentYear, currentDay + 1);
+          await CliDriver.promptScaffold(currentYear, currentDay + 1);
           break;
         case 'verbose':
           this.verbose = !this.verbose;
           break;
         case 'quit':
           process.exit(0);
-          break;
+          return;
         default:
           console.log(`Unrecognised option ${mainOption}`);
           process.exit(1);
-          break;
+          return;
       }
     }
   }
@@ -110,7 +110,7 @@ export class CliDriver {
     await this.execSolution(result.year, result.day, result.part, result.input, result.expected);
   }
 
-  private async promptScaffold(defaultYear: number, defaultDay: number) {
+  private static async promptScaffold(defaultYear: number, defaultDay: number) {
     const result = await inquirer.prompt([
       {
         type: 'number',
@@ -126,7 +126,7 @@ export class CliDriver {
       }
     ]);
 
-    this.scaffold(result.year, result.day);
+    CliDriver.scaffold(result.year, result.day);
   }
 
   private async execSolution(year: number, day: number, part: number, inputFile: string, expectFile?: string) {
@@ -144,7 +144,7 @@ export class CliDriver {
     }
   }
 
-  private scaffold(year: number, day: number) {
+  private static scaffold(year: number, day: number) {
     try {
       Scaffolder.scaffold(year, day);
     } catch (e) {
@@ -152,7 +152,7 @@ export class CliDriver {
     }
   }
 
-  private detectCurrentYear(): number {
+  private static detectCurrentYear(): number {
     for (let year = 2020; year < 2100; year++) {
       const exists = fs.existsSync(`./src/${year}`)
       if (!exists) {
@@ -162,7 +162,7 @@ export class CliDriver {
     return 2020;
   }
 
-  private detectCurrentDay(year: number): number {
+  private static detectCurrentDay(year: number): number {
     for (let day = 1; day < 30; day++) {
       const exists = fs.existsSync(`./src/${year}/day${day}`)
       if (!exists) {
