@@ -13,12 +13,12 @@ class PassportFields {
     }
   }
 
-  isValidPt1(logFn: (...args: any[]) => any) {
+  isValidPt1() {
     return !!this.fields.byr && !!this.fields.iyr && !!this.fields.eyr && !!this.fields.hgt && !!this.fields.hcl
       && !!this.fields.ecl && !!this.fields.pid;
   }
 
-  isValidPt2(logFn: (...args: any[]) => any) {
+  isValidPt2(logFn: (...args: string[]) => void) {
     const birth = parseInt(this.fields.byr, 10);
     if (!birth || birth < 1920 || birth > 2002) {
       logFn(`Invalid byr: ${this.fields.byr}`);
@@ -108,7 +108,7 @@ class Day4Solver extends Solver {
 
     let validPt1Count = 0;
     for (const passport of passportFields) {
-      const isValidPt1 = passport.isValidPt1(this.verboseLog);
+      const isValidPt1 = passport.isValidPt1();
       if (isValidPt1) {
         validPt1Count++;
       }
