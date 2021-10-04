@@ -9,7 +9,8 @@
     "check": "npm run lint",
     "day3Sample": "npx ts-node src/2020/day3/index.ts src/2020/day3/sample.txt 1 src/2020/day3/sample.p1.expected.txt",
     "day4Part2": "VERBOSE=1 npx ts-node src/day4/index.ts src/2020/day4/input.txt 2",
-    "scaffoldDay5": "npx ts-node src/common/Scaffolder.ts 2020 5"
+    "scaffoldDay5": "npx ts-node src/common/Scaffolder.ts 2020 5",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/cli-progress": "^3.9.2",
