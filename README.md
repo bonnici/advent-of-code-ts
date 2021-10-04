@@ -15,7 +15,7 @@ code in the latest year and start running for that day and year. Add a year para
 e.g. `yarn cli 2018`. The CLI will either run a solution or scaffold the code for another day's solution.
 
 To run a single solution without using the CLI, use a command like:
-`VERBOSE=1 npx ts-node src/day4/index.ts 2020/day4/input.txt 2 expected.txt`
+`cross-env VERBOSE=1 npx ts-node src/day4/index.ts 2020/day4/input.txt 2 expected.txt`
 `VERBOSE` turns on verbose logging, which can be used to log extra data depending on the solution. The first parameter 
 is the input file, the second parameter is the part to run (1 or 2), and the 3rd optional parameter is a file containing
 the expected result (useful for the sample inputs/outputs in puzzle descriptions).

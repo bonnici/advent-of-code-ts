@@ -15,29 +15,30 @@ const inputRe = /#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/;
 
 class Day3Solver extends Solver {
 	private claims: Array<Claim> = [];
-	private grid = new GenericGrid<string>(0, 0, '.');
+	private gridWidth = 0;
+	private gridHeight = 0;
 
 	public init(inputFile: string): void {
 		this.claims = InputParser.readLines(inputFile).map(Day3Solver.mapInput);
 
-		const gridWidth = this.claims.reduce((acc, cur) => Math.max(acc, cur.fromLeft + cur.width), 0);
-		const gridHeight = this.claims.reduce((acc, cur) => Math.max(acc, cur.fromTop + cur.height), 0);
-
-		const compareFn = (a: string, b: string) => a.localeCompare(b);
-		this.grid = new GenericGrid<string>(gridWidth, gridHeight, '.', compareFn, a => a);
+		this.gridWidth = this.claims.reduce((acc, cur) => Math.max(acc, cur.fromLeft + cur.width), 0);
+		this.gridHeight = this.claims.reduce((acc, cur) => Math.max(acc, cur.fromTop + cur.height), 0);
 	}
 
 	protected solvePart1(): string {
+		const compareFn = (a: string, b: string) => a.localeCompare(b);
+		const grid = new GenericGrid<string>(this.gridWidth, this.gridHeight, () => '.', compareFn, a => a);
+
 		this.claims.forEach(c => {
 			for (let x = c.fromLeft; x < c.fromLeft + c.width; x++) {
 				for (let y = c.fromTop; y < c.fromTop + c.height; y++) {
-					const char = this.grid.get(x, y);
+					const char = grid.get(x, y);
 					switch (char) {
 					case '.':
-						this.grid.set(x, y, '1');
+						grid.set(x, y, '1');
 						break;
 					case '1':
-						this.grid.set(x, y, '2');
+						grid.set(x, y, '2');
 						break;
 						// No change for 2 or more
 					default:
@@ -47,11 +48,43 @@ class Day3Solver extends Solver {
 			}
 		});
 
-		return `${this.grid.countOccurrences('2')}`;
+		return `${grid.countOccurrences('2')}`;
 	}
 
 	protected solvePart2(): string {
-		return 'todo';
+		const renderFn = (val: Set<number>) => {
+			if (val.size === 0) {
+				return '.';
+			}
+			if (val.size === 1) {
+				return `${val.values().next().value}`;
+			}
+			return 'X';
+		};
+		const grid = new GenericGrid<Set<number>>(this.gridWidth, this.gridHeight, () => new Set(), undefined, renderFn);
+
+		const allClaims = new Set();
+
+		this.claims.forEach(c => {
+			allClaims.add(c.claimId);
+			for (let x = c.fromLeft; x < c.fromLeft + c.width; x++) {
+				for (let y = c.fromTop; y < c.fromTop + c.height; y++) {
+					grid.get(x, y).add(c.claimId);
+				}
+			}
+		});
+
+		grid.elements.forEach(set => {
+			if (set.size > 1) {
+				set.forEach(val => allClaims.delete(val));
+			}
+		});
+
+		if (allClaims.size !== 1) {
+			throw 'More than 1 claim left';
+		}
+
+		return `${allClaims.values().next().value}`;
 	}
 
 	private static mapInput(line: string): Claim {

@@ -60,9 +60,9 @@ export abstract class Solver {
 		}
 	}
 
-	protected verboseLog(...args: string[]): void {
+	protected verboseLog(...args: unknown[]): void {
 		if (process.env.VERBOSE) {
-			console.log(args);
+			console.log(...args);
 		}
 	}
 

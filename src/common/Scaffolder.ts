@@ -8,8 +8,8 @@ TODO - copy over description
 `);
 
 const indexTemplate = Handlebars.compile(`
-import { Solver } from "../../common/Solver";
-import { InputParser}  from "../../common/InputParser";
+import { Solver } from '../../common/Solver';
+import { InputParser}  from '../../common/InputParser';
 
 class Day{{day}}Solver extends Solver {
 	private input: Array<any> = [];

@@ -133,7 +133,7 @@ export class CliDriver {
 		try {
 			const prefix = `src/${year}/day${day}/`;
 			const expected = expectFile ? ` src/${year}/day${day}/${expectFile}` : '';
-			const command = `${this.verbose ? 'VERBOSE=1 ' : ''}npx ts-node "${prefix}index.ts" "${prefix}${inputFile}" ${part}${expected}`;
+			const command = `${this.verbose ? 'cross-env VERBOSE=1 ' : ''}npx ts-node "${prefix}index.ts" "${prefix}${inputFile}" ${part}${expected}`;
 			console.log(`Running command: ${command}`);
 			execSync(
 				command,

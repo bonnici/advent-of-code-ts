@@ -5,25 +5,29 @@ Helper class for grid of a generic type.
 0,1 is 1 square down from top left.
 */
 export default class CharGrid<Type> {
-	private readonly grid: Array<Type>;
+	private readonly elems: Array<Type>;
 
 	constructor(
 		public width: number,
 		public height: number,
-		private initialVal: Type,
+		private initFn: () => Type,
 		private compareFn?: (a: Type, b: Type) => number,
 		private renderFn?: (a: Type) => string, // Should render single character
 	) {
-		this.grid = new Array<Type>(width * height);
-		this.grid.fill(initialVal);
+		this.elems = new Array<Type>(width * height);
+		this.elems = Array.from({ length: width * height }, initFn);
+	}
+
+	public get elements(): Array<Type> {
+		return this.elems;
 	}
 
 	public get(x: number, y: number): Type {
-		return this.grid[this.index(x, y)];
+		return this.elems[this.index(x, y)];
 	}
 
 	public set(x: number, y: number, val: Type): void {
-		this.grid[this.index(x, y)] = val;
+		this.elems[this.index(x, y)] = val;
 	}
 
 	public countOccurrences(val: Type): number {
@@ -33,7 +37,7 @@ export default class CharGrid<Type> {
 			throw 'No compare function';
 		}
 
-		return this.grid.reduce((acc, cur) => acc + (compareFn(cur, val) === 0 ? 1 : 0), 0);
+		return this.elems.reduce((acc, cur) => acc + (compareFn(cur, val) === 0 ? 1 : 0), 0);
 	}
 
 	public toString(): string {
@@ -43,7 +47,7 @@ export default class CharGrid<Type> {
 			throw 'No render function';
 		}
 
-		const renderedElems = this.grid
+		const renderedElems = this.elems
 			.map(e => renderFn(e))
 			.join('')
 			// Split into lines each with a size equal to the grid width
