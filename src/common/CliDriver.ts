@@ -6,11 +6,10 @@ import Scaffolder from "./Scaffolder";
 export class CliDriver {
   private verbose = false;
   private lastMainOption = 'p1';
-  private yearOverride: number | null = null;
 
-  public async run() {
+  public async run(yearOverride: number | undefined) {
     while (true) {
-      let currentYear = this.yearOverride || this.detectCurrentYear();
+      let currentYear = yearOverride || this.detectCurrentYear();
       let currentDay = this.detectCurrentDay(currentYear);
       const mainOption = await this.promptMainOption(currentYear, currentDay);
       switch (mainOption) {
@@ -34,9 +33,6 @@ export class CliDriver {
           break;
         case 'scaffold':
           await this.promptScaffold(currentYear, currentDay + 1);
-          break;
-        case 'override':
-          await this.promptOverrideYear();
           break;
         case 'verbose':
           this.verbose = !this.verbose;
@@ -66,7 +62,6 @@ export class CliDriver {
           { name: 'Run another solution', value: 'solve' },
           { name: `Scaffold Day ${day + 1}`, value: 'next' },
           { name: 'Scaffold another day', value: 'scaffold' },
-          { name: 'Override year', value: 'override' },
           { name: 'Toggle verbose mode', value: 'verbose' },
           { name: 'Quit', value: 'quit' },
         ],
@@ -134,18 +129,6 @@ export class CliDriver {
     this.scaffold(result.year, result.day);
   }
 
-  private async promptOverrideYear() {
-    const result = await inquirer.prompt([
-      {
-        type: 'number',
-        name: 'year',
-        message: 'What year?',
-      },
-    ]);
-
-    this.yearOverride = result.year;
-  }
-
   private async execSolution(year: number, day: number, part: number, inputFile: string, expectFile?: string) {
     try {
       const prefix = `src/${year}/day${day}/`;
@@ -190,7 +173,10 @@ export class CliDriver {
   }
 }
 
-new CliDriver().run()
+const args = process.argv.slice(2);
+const yearOverride = parseInt(args[0]) || undefined;
+
+new CliDriver().run(yearOverride)
   .then(() => {
     console.log('Done.');
   })
