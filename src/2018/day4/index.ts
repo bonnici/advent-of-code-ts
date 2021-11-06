@@ -46,7 +46,7 @@ class Day4Solver extends Solver {
 		let maxTimesAsleep = 0, maxAsleepMinute = 0;
 		for (let m = 0; m < 60; m++) {
 			let curTimesAsleep = 0;
-			for (const [key, value] of roster.days) {
+			for (const value of roster.days.values()) {
 				if (value.guard === guardMaxAsleep) {
 					if (value.minutesAsleep.has(m)) {
 						curTimesAsleep++;
@@ -71,7 +71,7 @@ class Day4Solver extends Solver {
 		let maxTimesAsleep = 0, maxAsleepMinute = 0, maxAsleepGuard = 0;
 		for (let m = 0; m < 60; m++) {
 			const guardToMinutesSlept: Map<number, number> = new Map();
-			for (const [day, rosterDay] of roster.days) {
+			for (const rosterDay of roster.days.values()) {
 				if (rosterDay.minutesAsleep.has(m)) {
 					if (guardToMinutesSlept.has(rosterDay.guard)) {
 						const newTotal = (guardToMinutesSlept.get(rosterDay.guard) || 0) + 1;

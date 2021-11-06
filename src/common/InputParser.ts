@@ -1,6 +1,10 @@
 import * as fs from 'fs';
 
 export class InputParser {
+	public static readString(path: string): string {
+		return fs.readFileSync(path, 'utf8').trim();
+	}
+
 	public static readLines(path: string): string[] {
 		return fs
 			.readFileSync(path, 'utf8')
