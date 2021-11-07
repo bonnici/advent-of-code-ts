@@ -13,25 +13,25 @@ export abstract class Solver {
 
 	public abstract init(inputFile: string): void;
 
-	protected abstract solvePart1(): string;
+	protected abstract solvePart1(isSample?: boolean): string;
 
-	protected abstract solvePart2(): string;
+	protected abstract solvePart2(isSample?: boolean): string;
 
 	constructor() {
 		this.progressBar = new CliProgress.SingleBar({}, CliProgress.Presets.shades_classic);
 	}
 
-	public runPart1(): Solution {
+	public runPart1(isSample: boolean): Solution {
 		const timeBefore = (new Date()).getTime();
-		const result = this.solvePart1();
+		const result = this.solvePart1(isSample);
 		const timeAfter = (new Date()).getTime();
 
 		return {result, timeTaken: timeAfter - timeBefore};
 	}
 
-	public runPart2(): Solution {
+	public runPart2(isSample: boolean): Solution {
 		const timeBefore = (new Date()).getTime();
-		const result = this.solvePart2();
+		const result = this.solvePart2(isSample);
 		const timeAfter = (new Date()).getTime();
 
 		return {result, timeTaken: timeAfter - timeBefore};
@@ -42,10 +42,11 @@ export abstract class Solver {
 		const fileName = args[0] || 'input';
 		const part = args[1] || '1';
 		const expectedFile = args[2] || undefined;
+		const isSample = !!expectedFile;
 
 		this.init(fileName);
 
-		const solution = part === '1' ? this.runPart1() : this.runPart2();
+		const solution = part === '1' ? this.runPart1(isSample) : this.runPart2(isSample);
 
 		console.log(`Part ${part} solution: ${chalk.bold(solution.result)}`);
 		console.log(`Part ${part} time taken: ${solution.timeTaken} ms`);
@@ -60,8 +61,8 @@ export abstract class Solver {
 		}
 	}
 
-	protected verboseLog(...args: unknown[]): void {
-		if (process.env.VERBOSE) {
+	protected sampleLog(...args: unknown[]): void {
+		if (process.env.SAMPLE_FILE) {
 			console.log(...args);
 		}
 	}

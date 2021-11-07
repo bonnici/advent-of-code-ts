@@ -4,7 +4,7 @@ Helper class for grid of a generic type.
 1,0 is 1 square left from top left.
 0,1 is 1 square down from top left.
 */
-export default class CharGrid<Type> {
+export default class GenericGrid<Type> {
 	private readonly elems: Array<Type>;
 
 	constructor(

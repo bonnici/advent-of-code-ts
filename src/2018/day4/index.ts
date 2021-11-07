@@ -24,7 +24,7 @@ class Day4Solver extends Solver {
 		// Find guard who slept the most
 		const totalAsleep = new Map();
 		for (const [key, value] of roster.days) {
-			this.verboseLog(`Day ${key}: Guard=${value.guard}, Asleep minutes=${value.minutesAsleep.size}`);
+			this.sampleLog(`Day ${key}: Guard=${value.guard}, Asleep minutes=${value.minutesAsleep.size}`);
 
 			if (totalAsleep.has(value.guard)) {
 				totalAsleep.set(value.guard, totalAsleep.get(value.guard) + value.minutesAsleep.size);
@@ -40,7 +40,7 @@ class Day4Solver extends Solver {
 				guardMaxAsleep = key;
 			}
 		}
-		this.verboseLog( `Guard: ${guardMaxAsleep}, asleep: ${maxAsleep}`);
+		this.sampleLog( `Guard: ${guardMaxAsleep}, asleep: ${maxAsleep}`);
 
 		// Find minute slept the most by that guard
 		let maxTimesAsleep = 0, maxAsleepMinute = 0;
@@ -55,7 +55,7 @@ class Day4Solver extends Solver {
 			}
 
 			if (curTimesAsleep > maxTimesAsleep) {
-				this.verboseLog( `Found new max time asleep: ${curTimesAsleep} at ${m}`);
+				this.sampleLog( `Found new max time asleep: ${curTimesAsleep} at ${m}`);
 				maxTimesAsleep = curTimesAsleep;
 				maxAsleepMinute = m;
 			}
@@ -83,9 +83,9 @@ class Day4Solver extends Solver {
 			}
 
 			for (const [guard, minutesAsleep] of guardToMinutesSlept) {
-				this.verboseLog( `At minute ${m}, guard ${guard} spend ${minutesAsleep} asleep`);
+				this.sampleLog( `At minute ${m}, guard ${guard} spend ${minutesAsleep} asleep`);
 				if (minutesAsleep > maxTimesAsleep) {
-					this.verboseLog( `Found new max times asleep: ${guard} at ${m} for ${minutesAsleep} minutes`);
+					this.sampleLog( `Found new max times asleep: ${guard} at ${m} for ${minutesAsleep} minutes`);
 					maxTimesAsleep = minutesAsleep;
 					maxAsleepGuard = guard;
 					maxAsleepMinute = m;
@@ -105,22 +105,22 @@ class Day4Solver extends Solver {
 			if (line.includes('begins shift')) {
 				const matched = line.match(/Guard #(\d+) begins/);
 				if (!matched) {
-					this.verboseLog('Error matching guard');
+					this.sampleLog('Error matching guard');
 					return;
 				}
 
 				curGuard = parseInt(matched[1]);
-				this.verboseLog('Found guard', curGuard);
+				this.sampleLog('Found guard', curGuard);
 			} else if (line.includes('falls asleep')) {
 				const matched = line.match(/\[([\d-]+) \d\d:(\d\d)] falls asleep/);
 				if (!matched) {
-					this.verboseLog('Error matching asleep');
+					this.sampleLog('Error matching asleep');
 					return;
 				}
 
 				const date = matched[1];
 				const minutes = parseInt(matched[2]);
-				this.verboseLog('Found asleep', date, minutes);
+				this.sampleLog('Found asleep', date, minutes);
 				asleepTime = minutes;
 
 				if (!roster.days.has(date)) {
@@ -129,17 +129,17 @@ class Day4Solver extends Solver {
 			} else if (line.includes('wakes up')) {
 				const matched = line.match(/\[([\d-]+) \d\d:(\d\d)] wakes up/);
 				if (!matched) {
-					this.verboseLog('Error matching wakes up');
+					this.sampleLog('Error matching wakes up');
 					return;
 				}
 
 				const date = matched[1];
 				const wakesUpTime = parseInt(matched[2]);
-				this.verboseLog('Found wakes up', date, wakesUpTime);
+				this.sampleLog('Found wakes up', date, wakesUpTime);
 
 				const rosterDays = roster.days.get(date);
 				if (!rosterDays) {
-					this.verboseLog('Expected day to exist', date);
+					this.sampleLog('Expected day to exist', date);
 					return;
 				}
 
@@ -147,7 +147,7 @@ class Day4Solver extends Solver {
 					rosterDays.minutesAsleep.add(m);
 				}
 			} else {
-				this.verboseLog('Unexpected line');
+				this.sampleLog('Unexpected line');
 			}
 		});
 

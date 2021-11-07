@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import Scaffolder from './Scaffolder';
 
 export class CliDriver {
-	private verbose = false;
 	private lastMainOption = 'p1';
 
 	public async run(yearOverride: number | undefined): Promise<void> {
@@ -34,9 +33,6 @@ export class CliDriver {
 			case 'scaffold':
 				await CliDriver.promptScaffold(currentYear, currentDay + 1);
 				break;
-			case 'verbose':
-				this.verbose = !this.verbose;
-				break;
 			case 'quit':
 				process.exit(0);
 				return;
@@ -53,7 +49,7 @@ export class CliDriver {
 			{
 				type: 'rawlist',
 				name: 'mainOption',
-				message: `Currently on ${year} Day ${day}${this.verbose ? ' in verbose mode' : ''}. Select an option:`,
+				message: `Currently on ${year} Day ${day}. Select an option:`,
 				choices: [
 					{name: 'Part 1 solution', value: 'p1'},
 					{name: 'Part 2 solution', value: 'p2'},
@@ -62,7 +58,6 @@ export class CliDriver {
 					{name: 'Run another solution', value: 'solve'},
 					{name: `Scaffold Day ${day + 1}`, value: 'next'},
 					{name: 'Scaffold another day', value: 'scaffold'},
-					{name: 'Toggle verbose mode', value: 'verbose'},
 					{name: 'Quit', value: 'quit'},
 				],
 				default: this.lastMainOption,
@@ -133,7 +128,7 @@ export class CliDriver {
 		try {
 			const prefix = `src/${year}/day${day}/`;
 			const expected = expectFile ? ` src/${year}/day${day}/${expectFile}` : '';
-			const command = `${this.verbose ? 'cross-env VERBOSE=1 ' : ''}npx ts-node "${prefix}index.ts" "${prefix}${inputFile}" ${part}${expected}`;
+			const command = `${expectFile ? 'cross-env SAMPLE_FILE=1 ' : ''}npx ts-node "${prefix}index.ts" "${prefix}${inputFile}" ${part}${expected}`;
 			console.log(`Running command: ${command}`);
 			execSync(
 				command,

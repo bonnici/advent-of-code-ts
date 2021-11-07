@@ -13,6 +13,10 @@ export class InputParser {
 			.filter(line => !!line);
 	}
 
+	public static readFirstLineAsInts(path: string): number[] {
+		return InputParser.readLines(path)[0].split(' ').map(n => parseInt(n, 10));
+	}
+
 	public static readLinesAsInts(path: string): number[] {
 		return InputParser.readLines(path).map(line => parseInt(line, 10));
 	}

@@ -132,7 +132,7 @@ class Day4Solver extends Solver {
 
 		let validPt2Count = 0;
 		for (const passport of passportFields) {
-			const isValidPt2 = passport.isValidPt2(this.verboseLog);
+			const isValidPt2 = passport.isValidPt2(this.sampleLog);
 			if (isValidPt2) {
 				validPt2Count++;
 			}
