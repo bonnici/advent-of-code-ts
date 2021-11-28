@@ -2,7 +2,7 @@
 Helper class for a circular array of a generic type. Uses array internally so add/remove is inefficient.
 */
 
-export default class CircularArrayList<Type> {
+export default class CircularArray<Type> {
 	public array: Array<Type> = [];
 
 

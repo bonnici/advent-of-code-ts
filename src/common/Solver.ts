@@ -68,23 +68,31 @@ export abstract class Solver {
 	}
 
 	protected initProgress(maxValue: number): void {
-		this.progressBarMaxValue = maxValue;
-		this.progressBar.start(this.progressBarMaxValue, 0);
+		if (!process.env.SAMPLE_FILE) {
+			this.progressBarMaxValue = maxValue;
+			this.progressBar.start(this.progressBarMaxValue, 0);
+		}
 	}
 
 	protected reportProgress(value: number): void {
-		this.progressBar.update(value);
+		if (!process.env.SAMPLE_FILE) {
+			this.progressBar.update(value);
 
-		if (value >= this.progressBarMaxValue) {
-			this.progressBar.stop();
+			if (value >= this.progressBarMaxValue) {
+				this.progressBar.stop();
+			}
 		}
 	}
 
 	protected stopProgress(): void {
-		this.progressBar.stop();
+		if (!process.env.SAMPLE_FILE) {
+			this.progressBar.stop();
+		}
 	}
 
 	protected incrementProgress(): void {
-		this.progressBar.increment();
+		if (!process.env.SAMPLE_FILE) {
+			this.progressBar.increment();
+		}
 	}
 }

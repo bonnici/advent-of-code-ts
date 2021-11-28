@@ -31,7 +31,7 @@ class Day8Solver extends Solver {
 	private processNode(index: number, nodeValues?: Map<number, number>): Result {
 		const startIndex = index;
 		const numChildNodes = this.input[index++];
-		let metadataCount = this.input[index++];
+		const metadataCount = this.input[index++];
 		let metadataSum = 0;
 
 		this.sampleLog(`Processing node with ${numChildNodes} child nodes and ${metadataCount} metadata records`);
@@ -41,7 +41,7 @@ class Day8Solver extends Solver {
 			childIndices.push(index);
 			const curResult = this.processNode(index, nodeValues);
 			index = curResult.endIndex;
-			metadataSum += curResult.metadataSum
+			metadataSum += curResult.metadataSum;
 		}
 
 		this.sampleLog(`Processing ${metadataCount} metadata records starting at index ${index}`);

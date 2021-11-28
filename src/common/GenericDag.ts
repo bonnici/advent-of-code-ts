@@ -27,7 +27,7 @@ export default class GenericDag<Type> {
 		return this.nodes.get(name) || null;
 	}
 
-	public addLink(from: Type, to: Type) {
+	public addLink(from: Type, to: Type): void {
 		let fromNode = this.nodes.get(from);
 		if (!fromNode) {
 			fromNode = new GenericDagNode<Type>(from);
@@ -44,15 +44,15 @@ export default class GenericDag<Type> {
 		toNode.backLinks.set(from, fromNode);
 	}
 
-	public removeNode(name: Type) {
+	public removeNode(name: Type): void {
 		const toRemove = this.nodes.get(name);
 
 		if (!toRemove) {
 			return;
 		}
 
-		toRemove.forwardLinks.forEach(node => node.backLinks.delete(name))
-		toRemove.backLinks.forEach(node => node.forwardLinks.delete(name))
+		toRemove.forwardLinks.forEach(node => node.backLinks.delete(name));
+		toRemove.backLinks.forEach(node => node.forwardLinks.delete(name));
 
 		this.nodes.delete(name);
 	}

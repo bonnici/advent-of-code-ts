@@ -1,11 +1,11 @@
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
-import GenericDag from "../../common/GenericDag";
+import GenericDag from '../../common/GenericDag';
 
 const inputRe = /Step ([A-Z]) must be finished before step ([A-Z]) can begin\./;
 
 class Day7Solver extends Solver {
-	private input: Array<any> = [];
+	private input: Array<string> = [];
 
 	public init(inputFile: string): void {
 		this.input = InputParser.readLines(inputFile);
