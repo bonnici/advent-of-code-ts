@@ -2,7 +2,7 @@ import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
 
 class Day1Solver extends Solver {
-	private input: Array<any> = [];
+	private input: Array<number> = [];
 
 	public init(inputFile: string): void {
 		this.input = InputParser.readLinesAsInts(inputFile);

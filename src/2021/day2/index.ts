@@ -25,17 +25,17 @@ class Day2Solver extends Solver {
 
 		this.input.forEach(m => {
 			switch (m.direction) {
-				case 'forward':
-					horizontalPos += m.amount;
-					break;
-				case 'up':
-					depth -= m.amount;
-					break;
-				case 'down':
-					depth += m.amount;
-					break;
+			case 'forward':
+				horizontalPos += m.amount;
+				break;
+			case 'up':
+				depth -= m.amount;
+				break;
+			case 'down':
+				depth += m.amount;
+				break;
 			}
-		})
+		});
 
 		return `${horizontalPos * depth}`;
 	}
@@ -47,18 +47,18 @@ class Day2Solver extends Solver {
 
 		this.input.forEach(m => {
 			switch (m.direction) {
-				case 'forward':
-					horizontalPos += m.amount;
-					depth += aim * m.amount;
-					break;
-				case 'up':
-					aim -= m.amount;
-					break;
-				case 'down':
-					aim += m.amount;
-					break;
+			case 'forward':
+				horizontalPos += m.amount;
+				depth += aim * m.amount;
+				break;
+			case 'up':
+				aim -= m.amount;
+				break;
+			case 'down':
+				aim += m.amount;
+				break;
 			}
-		})
+		});
 
 		return `${horizontalPos * depth}`;
 	}
