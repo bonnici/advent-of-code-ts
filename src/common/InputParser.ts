@@ -5,12 +5,12 @@ export class InputParser {
 		return fs.readFileSync(path, 'utf8').trim();
 	}
 
-	public static readLines(path: string): string[] {
+	public static readLines(path: string, shouldFilter = true): string[] {
 		return fs
 			.readFileSync(path, 'utf8')
 			.split('\n')
 			.map((line: string) => line.trim())
-			.filter(line => !!line);
+			.filter(line => !shouldFilter || !!line);
 	}
 
 	public static readFirstLineAsInts(path: string): number[] {
@@ -30,12 +30,12 @@ export class InputParser {
 	}
 
 	public static readLinesInGroups(path: string): string[][] {
-		const lines = InputParser.readLines(path);
+		const lines = InputParser.readLines(path, false);
 
 		const groups: string[][] = [];
 		let curGroup: string[] = [];
 		lines.forEach((line) => {
-			if (line === '') {
+			if ((line || '').trim() === '') {
 				groups.push(curGroup);
 				curGroup = [];
 			} else {
