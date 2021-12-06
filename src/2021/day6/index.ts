@@ -9,32 +9,20 @@ class Day6Solver extends Solver {
 	}
 
 	protected solvePart1(): string {
-		this.sampleLog('input', this.input);
-
-		const timers = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-		for (const num of this.input) {
-			timers[num]++;
-		}
-
-		this.sampleLog('timers', timers);
-
-		for (let day = 1; day <= 80; day++) {
-			const newSpawns = timers.shift() || 0;
-			timers[6] += newSpawns;
-			timers.push(newSpawns);
-		}
-
-		const numFish = timers.reduce((acc, cur) => acc + cur, 0);
-		return `${numFish}`;
+		return this.solve(80);
 	}
 
 	protected solvePart2(): string {
+		return this.solve(256);
+	}
+
+	private solve(numDays: number): string {
 		const timers = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 		for (const num of this.input) {
 			timers[num]++;
 		}
 
-		for (let day = 1; day <= 256; day++) {
+		for (let day = 1; day <= numDays; day++) {
 			const newSpawns = timers.shift() || 0;
 			timers[6] += newSpawns;
 			timers.push(newSpawns);

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import Scaffolder from './Scaffolder';
 
 export class CliDriver {
-	private lastMainOption = 'p1';
+	private lastMainOption = 'p1s';
 
 	public async run(yearOverride: number | undefined): Promise<void> {
 		for (; ;) {
