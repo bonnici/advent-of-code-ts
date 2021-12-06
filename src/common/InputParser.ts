@@ -46,4 +46,8 @@ export class InputParser {
 
 		return groups;
 	}
+
+	public static lineToNumbers(line: string): number[] {
+		return line.split(',').map(s => parseInt(s));
+	}
 }

@@ -51,10 +51,10 @@ export class CliDriver {
 				name: 'mainOption',
 				message: `Currently on ${year} Day ${day}. Select an option:`,
 				choices: [
-					{name: 'Part 1 solution', value: 'p1'},
-					{name: 'Part 2 solution', value: 'p2'},
 					{name: 'Part 1 sample solution', value: 'p1s'},
+					{name: 'Part 1 solution', value: 'p1'},
 					{name: 'Part 2 sample solution', value: 'p2s'},
+					{name: 'Part 2 solution', value: 'p2'},
 					{name: 'Run another solution', value: 'solve'},
 					{name: `Scaffold Day ${day + 1}`, value: 'next'},
 					{name: 'Scaffold another day', value: 'scaffold'},
