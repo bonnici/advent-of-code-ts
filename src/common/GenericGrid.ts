@@ -1,9 +1,12 @@
 /*
 Helper class for grid of a generic type.
 0,0 is top left corner.
-1,0 is 1 square left from top left.
+1,0 is 1 square right from top left.
 0,1 is 1 square down from top left.
 */
+
+import Coord from './Coord';
+
 export default class GenericGrid<Type> {
 	private readonly elems: Array<Type>;
 
@@ -22,12 +25,31 @@ export default class GenericGrid<Type> {
 		return this.elems;
 	}
 
+	// Deprecated
 	public get(x: number, y: number): Type {
 		return this.elems[this.index(x, y)];
 	}
 
+	// get coord
+	public getC(c: Coord): Type {
+		return this.elems[this.indexC(c)];
+	}
+
+	public safeGet(c: Coord): Type | undefined {
+		if (!this.inBounds(c)) {
+			return undefined;
+		}
+
+		return this.getC(c);
+	}
+
+	// Deprecated
 	public set(x: number, y: number, val: Type): void {
 		this.elems[this.index(x, y)] = val;
+	}
+
+	public setC(c: Coord, val: Type): void {
+		this.elems[this.indexC(c)] = val;
 	}
 
 	public countOccurrences(val: Type): number {
@@ -57,5 +79,13 @@ export default class GenericGrid<Type> {
 
 	private index(x: number, y: number) {
 		return (y * this.width) + x;
+	}
+
+	private indexC(c: Coord) {
+		return (c.y * this.width) + c.x;
+	}
+
+	private inBounds(c: Coord) {
+		return c.x >= 0 && c.x < this.width && c.y >= 0 && c.y < this.height;
 	}
 }
