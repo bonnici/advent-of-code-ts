@@ -7,20 +7,7 @@ class Day10Solver extends Solver {
 	private grid: GenericGrid<number> = new GenericGrid<number>(0, 0, () => 0);
 
 	public init(inputFile: string): void {
-		const chars = InputParser.readLinesAsChars(inputFile);
-		this.grid = new GenericGrid<number>(
-			chars[0].length,
-			chars.length,
-			() => 0,
-			(a, b) => a - b,
-			(n) => `${n}`,
-		);
-		for (let i = 0; i < chars.length; i++) {
-			const line = chars[i];
-			for (let j = 0; j < line.length; j++) {
-				this.grid.set(j, i, parseInt(line[j]));
-			}
-		}
+		this.grid = InputParser.readLinesAsNumberGrid(inputFile);
 	}
 
 	protected solvePart1(): string {

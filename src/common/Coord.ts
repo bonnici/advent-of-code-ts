@@ -3,6 +3,9 @@ Coordinate class for grids.
 0,0 is top left corner.
 1,0 is 1 square right from top left.
 0,1 is 1 square down from top left.
+
+x is going left from 0 to width.
+y is going down from 0 to height.
 */
 
 export default class Coord {

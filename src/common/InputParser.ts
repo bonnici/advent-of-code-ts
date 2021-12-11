@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import GenericGrid from './GenericGrid';
 
 export class InputParser {
 	public static readString(path: string): string {
@@ -45,6 +46,45 @@ export class InputParser {
 		groups.push(curGroup);
 
 		return groups;
+	}
+
+	public static readLinesAsNumberGrid(path: string): GenericGrid<number> {
+		const chars = InputParser.readLinesAsChars(path);
+		const grid = new GenericGrid<number>(
+			chars[0].length,
+			chars.length,
+			() => 0,
+			(a, b) => a - b,
+			(n) => `${n}`,
+		);
+		for (let i = 0; i < chars.length; i++) {
+			const line = chars[i];
+			for (let j = 0; j < line.length; j++) {
+				grid.set(j, i, parseInt(line[j]));
+			}
+		}
+
+		return grid;
+	}
+
+
+	public static readLinesAsCharGrid(path: string): GenericGrid<string> {
+		const chars = InputParser.readLinesAsChars(path);
+		const grid = new GenericGrid<string>(
+			chars[0].length,
+			chars.length,
+			() => '.',
+			(a, b) => a.localeCompare(b),
+			s => s,
+		);
+		for (let i = 0; i < chars.length; i++) {
+			const line = chars[i];
+			for (let j = 0; j < line.length; j++) {
+				grid.set(j, i, line[j]);
+			}
+		}
+
+		return grid;
 	}
 
 	public static lineToNumbers(line: string): number[] {
