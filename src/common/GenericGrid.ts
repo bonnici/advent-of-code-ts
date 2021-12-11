@@ -25,7 +25,6 @@ export default class GenericGrid<Type> {
 		return this.elems;
 	}
 
-	// Deprecated
 	public get(x: number, y: number): Type {
 		return this.elems[this.index(x, y)];
 	}
@@ -43,7 +42,6 @@ export default class GenericGrid<Type> {
 		return this.getC(c);
 	}
 
-	// Deprecated
 	public set(x: number, y: number, val: Type): void {
 		this.elems[this.index(x, y)] = val;
 	}

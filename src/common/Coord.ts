@@ -28,4 +28,20 @@ export default class Coord {
 		return new Coord(this.x, this.y + 1);
 	}
 
+	public upLeft(): Coord {
+		return new Coord(this.x - 1, this.y - 1);
+	}
+
+	public upRight(): Coord {
+		return new Coord(this.x + 1, this.y - 1);
+	}
+
+	public downLeft(): Coord {
+		return new Coord(this.x - 1, this.y + 1);
+	}
+
+	public downRight(): Coord {
+		return new Coord(this.x + 1, this.y + 1);
+	}
+
 }
