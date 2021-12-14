@@ -1,12 +1,15 @@
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
 
+type CharCounts = { [char: string]: number };
+
 class Day14Solver extends Solver {
 	private polymer = '';
 	private insertionRules: { [pair: string]: string} = {};
 	private splitInsertionRules: { [first: string]: { [second: string]: string }} = {};
-	private charCounts: { [char: string]: number } = {};
-	private fillBetweenCache: Map<string, number> = new Map();
+	private inBetweenCache: { [first: string]: { [second: string]: { [level: number]: CharCounts | null } }} = {};
+	private defaultCharCounts: CharCounts = {};
+	private allChars: Set<string> = new Set();
 
 	public init(inputFile: string): void {
 		const input = InputParser.readLinesInGroups(inputFile);
@@ -23,9 +26,14 @@ class Day14Solver extends Solver {
 			}
 			this.splitInsertionRules[first][second] = reaction;
 
-			this.charCounts[first] = 0;
-			this.charCounts[second] = 0;
-			this.charCounts[reaction] = 0;
+			this.allChars.add(first);
+			this.allChars.add(second);
+			this.allChars.add(reaction);
+		}
+
+		// Part 2 solution only works if there aren't too many chars
+		if (this.allChars.size > 10) {
+			throw 'Too many chars';
 		}
 	}
 
@@ -61,23 +69,28 @@ class Day14Solver extends Solver {
 	protected solvePart2(): string {
 		this.sampleLog(this.polymer);
 		this.sampleLog(this.splitInsertionRules);
-		this.sampleLog(this.charCounts);
 
-		const maxSteps = 30;
+		const depth = 40;
+		this.initInBetweenCache(depth);
+		this.sampleLog(this.inBetweenCache);
+
+		const charCounts: CharCounts = JSON.parse(JSON.stringify(this.defaultCharCounts));
+
 		for (let i = 0; i < this.polymer.length - 1; i++) {
 			const first = this.polymer[i];
 			const second = this.polymer[i + 1];
 
-			this.incrementCount(first);
-			this.fillBetween(first, second, maxSteps);
+			charCounts[first] += 1;
+			const betweenCounts = this.fillBetween(first, second, depth);
+			Object.keys(betweenCounts).forEach(c => charCounts[c] += betweenCounts[c]);
 		}
 
-		this.incrementCount(this.polymer[this.polymer.length - 1]);
+		charCounts[this.polymer[this.polymer.length - 1]] += 1;
 
-		this.sampleLog('Counts', this.charCounts);
+		this.sampleLog('Counts', charCounts);
 
 		const scores: Array<{ char: string, count: number }> = [];
-		Object.keys(this.charCounts).forEach(char => scores.push({ char, count: this.charCounts[char] }));
+		Object.keys(charCounts).forEach(char => scores.push({ char, count: charCounts[char] }));
 		scores.sort((a, b) => a.count - b.count);
 
 		this.sampleLog('Sorted scores', scores);
@@ -85,20 +98,45 @@ class Day14Solver extends Solver {
 		return `${scores[scores.length - 1].count - scores[0].count}`;
 	}
 
-	private fillBetween(first: string, second: string, maxSteps: number) {
+	private fillBetween(first: string, second: string, maxSteps: number): CharCounts {
+		const cache = this.inBetweenCache[first][second][maxSteps];
+		if (cache !== null) {
+			// this.sampleLog(`Cache hit at ${first}, ${second}, ${maxSteps}`);
+			return cache;
+		}
+
+		const charCounts = JSON.parse(JSON.stringify(this.defaultCharCounts));
+
 		const reaction = (this.splitInsertionRules[first] || {})[second];
 		if (reaction) {
-			this.incrementCount(reaction);
+			charCounts[reaction] += 1;
 
 			if (maxSteps > 1) {
-				this.fillBetween(first, reaction, maxSteps - 1);
-				this.fillBetween(reaction, second, maxSteps - 1);
+				const firstCharCounts = this.fillBetween(first, reaction, maxSteps - 1);
+				const secondCharCounts = this.fillBetween(reaction, second, maxSteps - 1);
+
+				Object.keys(firstCharCounts).forEach(c => charCounts[c] += firstCharCounts[c]);
+				Object.keys(secondCharCounts).forEach(c => charCounts[c] += secondCharCounts[c]);
 			}
 		}
+
+		this.inBetweenCache[first][second][maxSteps] = charCounts;
+		return charCounts;
 	}
 
-	private incrementCount(char: string) {
-		this.charCounts[char] += 1;
+	// Set up cache to hold character counts for all reactions going down to the maximum depth
+	private initInBetweenCache(maxDepth: number) {
+		for (const first of this.allChars.values()) {
+			this.defaultCharCounts[first] = 0;
+
+			this.inBetweenCache[first] = {};
+			for (const second of this.allChars.values()) {
+				this.inBetweenCache[first][second] = {};
+				for (let depth = 1; depth <= maxDepth; depth++) {
+					this.inBetweenCache[first][second][depth] = null;
+				}
+			}
+		}
 	}
 }
 
