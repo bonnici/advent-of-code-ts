@@ -5,33 +5,40 @@ import Scaffolder from './Scaffolder';
 
 export class CliDriver {
 	private lastMainOption = 'p1s';
+	private currentYear = 0;
+	private currentDay = 0;
 
-	public async run(yearOverride: number | undefined): Promise<void> {
+	public async run(yearOverride?: number): Promise<void> {
+		this.detectYearAndDay(yearOverride);
+
 		for (; ;) {
-			const currentYear = yearOverride || CliDriver.detectCurrentYear();
-			const currentDay = CliDriver.detectCurrentDay(currentYear);
-			const mainOption = await this.promptMainOption(currentYear, currentDay);
+			const mainOption = await this.promptMainOption();
 			switch (mainOption) {
 			case 'p1':
-				await this.execSolution(currentYear, currentDay, 1, 'input.txt');
+				await this.execSolution(this.currentYear, this.currentDay, 1, 'input.txt');
 				break;
 			case 'p2':
-				await this.execSolution(currentYear, currentDay, 2, 'input.txt');
+				await this.execSolution(this.currentYear, this.currentDay, 2, 'input.txt');
 				break;
 			case 'p1s':
-				await this.execSolution(currentYear, currentDay, 1, 'sample.p1.txt', 'sample.p1.expected.txt');
+				await this.execSolution(this.currentYear, this.currentDay, 1, 'sample.p1.txt', 'sample.p1.expected.txt');
 				break;
 			case 'p2s':
-				await this.execSolution(currentYear, currentDay, 2, 'sample.p2.txt', 'sample.p2.expected.txt');
+				await this.execSolution(this.currentYear, this.currentDay, 2, 'sample.p2.txt', 'sample.p2.expected.txt');
+				break;
+			case 'change':
+				await this.promptChangeDayYear(this.currentYear, this.currentDay);
 				break;
 			case 'solve':
-				await this.promptSolution(currentYear, currentDay);
+				await this.promptSolution(this.currentYear, this.currentDay);
 				break;
 			case 'next':
-				await CliDriver.scaffold(currentYear, currentDay + 1);
+				await CliDriver.scaffold(this.currentYear, this.currentDay + 1);
+				this.detectYearAndDay();
 				break;
 			case 'scaffold':
-				await CliDriver.promptScaffold(currentYear, currentDay + 1);
+				await CliDriver.promptScaffold(this.currentYear, this.currentDay + 1);
+				this.detectYearAndDay();
 				break;
 			case 'quit':
 				process.exit(0);
@@ -44,19 +51,20 @@ export class CliDriver {
 		}
 	}
 
-	private async promptMainOption(year: number, day: number): Promise<string> {
+	private async promptMainOption(): Promise<string> {
 		const result = await inquirer.prompt([
 			{
 				type: 'rawlist',
 				name: 'mainOption',
-				message: `Currently on ${year} Day ${day}. Select an option:`,
+				message: `Currently on ${this.currentYear} Day ${this.currentDay}. Select an option:`,
 				choices: [
 					{name: 'Part 1 sample solution', value: 'p1s'},
 					{name: 'Part 1 solution', value: 'p1'},
 					{name: 'Part 2 sample solution', value: 'p2s'},
 					{name: 'Part 2 solution', value: 'p2'},
+					{name: 'Change year/day', value: 'change'},
 					{name: 'Run another solution', value: 'solve'},
-					{name: `Scaffold Day ${day + 1}`, value: 'next'},
+					{name: `Scaffold Day ${this.currentDay + 1}`, value: 'next'},
 					{name: 'Scaffold another day', value: 'scaffold'},
 					{name: 'Quit', value: 'quit'},
 				],
@@ -124,6 +132,26 @@ export class CliDriver {
 		CliDriver.scaffold(result.year, result.day);
 	}
 
+	private async promptChangeDayYear(defaultYear: number, defaultDay: number) {
+		const result = await inquirer.prompt([
+			{
+				type: 'number',
+				name: 'year',
+				message: 'What year?',
+				default: defaultYear,
+			},
+			{
+				type: 'number',
+				name: 'day',
+				message: 'What day?',
+				default: defaultDay,
+			},
+		]);
+
+		this.currentYear = result.year;
+		this.currentDay = result.day;
+	}
+
 	private async execSolution(year: number, day: number, part: number, inputFile: string, expectFile?: string) {
 		try {
 			const prefix = `src/${year}/day${day}/`;
@@ -165,6 +193,11 @@ export class CliDriver {
 			}
 		}
 		return 1;
+	}
+
+	private detectYearAndDay(yearOverride?: number) {
+		this.currentYear = yearOverride || CliDriver.detectCurrentYear();
+		this.currentDay = CliDriver.detectCurrentDay(this.currentYear);
 	}
 }
 

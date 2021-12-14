@@ -1,13 +1,12 @@
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
-import Coord from "../../common/Coord";
-import GenericGrid from "../../common/GenericGrid";
-import {start} from "repl";
+import Coord from '../../common/Coord';
+import GenericGrid from '../../common/GenericGrid';
 
 interface Instruction {
 	dir: string,
 	val: number
-};
+}
 
 class Day13Solver extends Solver {
 	private grid: GenericGrid<string> = new GenericGrid<string>(0, 0, () => '');
@@ -57,7 +56,7 @@ class Day13Solver extends Solver {
 	}
 
 	protected solvePart1(): string {
-		this.fold(this.instructions[0])
+		this.fold(this.instructions[0]);
 
 		return `${this.grid.countOccurrences('#')}`;
 	}
@@ -69,7 +68,7 @@ class Day13Solver extends Solver {
 	private fold(instruction: Instruction) {
 		if (instruction.dir === 'x') {
 			this.foldLeft(instruction.val);
-		} else if (instruction.dir = 'y') {
+		} else if (instruction.dir === 'y') {
 			this.foldUp(instruction.val);
 		}
 	}

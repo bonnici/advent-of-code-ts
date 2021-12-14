@@ -1,6 +1,6 @@
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
-import GenericDag from "../../common/GenericDag";
+import GenericDag from '../../common/GenericDag';
 
 // start-A
 const inputRe = /([a-zA-Z]+)-([a-zA-Z]+)/;
@@ -33,7 +33,7 @@ class Day12Solver extends Solver {
 			throw 'no start node';
 		}
 
-		let numPaths = this.countPathsToEnd('start', [], {});
+		const numPaths = this.countPathsToEnd('start', [], {});
 
 		return `${numPaths}`;
 	}
@@ -44,7 +44,7 @@ class Day12Solver extends Solver {
 			throw 'no start node';
 		}
 
-		let numPaths = this.countPathsToEnd('start', [], {}, true);
+		const numPaths = this.countPathsToEnd('start', [], {}, true);
 
 		return `${numPaths}`;
 	}
