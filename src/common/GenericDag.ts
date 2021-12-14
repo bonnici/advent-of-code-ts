@@ -10,6 +10,11 @@ export class GenericDagNode<Type> {
 		this.backLinks = new Map();
 		this.forwardLinks = new Map();
 	}
+
+	// For when using this as an undirected graph
+	public allLinkNames(): Array<Type> {
+		return [...this.backLinks.keys(), ...this.forwardLinks.keys()];
+	}
 }
 
 export default class GenericDag<Type> {
@@ -55,5 +60,23 @@ export default class GenericDag<Type> {
 		toRemove.backLinks.forEach(node => node.forwardLinks.delete(name));
 
 		this.nodes.delete(name);
+	}
+
+	public toString(): string {
+		let result = '';
+		for (const [key, value] of this.nodes) {
+			const back = [...value.backLinks.keys()].join(',');
+			const forward = [...value.forwardLinks.keys()].join(',');
+			result += `${key}: back=[${back}], forward=[${forward}]\n`;
+		}
+		return result;
+	}
+
+	public toGraphString(): string {
+		let result = '';
+		for (const [key, value] of this.nodes) {
+			result += `${key}: ${value.allLinkNames()}\n`;
+		}
+		return result;
 	}
 }
