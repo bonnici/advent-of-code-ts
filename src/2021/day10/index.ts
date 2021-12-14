@@ -1,81 +1,100 @@
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
-import GenericGrid from '../../common/GenericGrid';
-import Coord from '../../common/Coord';
 
 class Day10Solver extends Solver {
-	private grid: GenericGrid<number> = new GenericGrid<number>(0, 0, () => 0);
+	private input: Array<string> = [];
+	private syntaxScores: { [char: string]: number} = {
+		')': 3,
+		']': 57,
+		'}': 1197,
+		'>': 25137,
+	};
+	private completionScores: { [char: string]: number} = {
+		'(': 1,
+		'[': 2,
+		'{': 3,
+		'<': 4,
+	};
 
 	public init(inputFile: string): void {
-		this.grid = InputParser.readLinesAsNumberGrid(inputFile);
+		this.input = InputParser.readLines(inputFile);
 	}
 
 	protected solvePart1(): string {
-		this.sampleLog(`start\n${this.grid.toString()}\n`);
-
-		let numFlashes = 0;
-		for (let step = 0; step < 100; step++) {
-			this.step();
-			numFlashes += this.countFlashes();
-
-			this.sampleLog(`after step ${step + 1}\n${this.grid.toString()}\n`);
+		let score = 0;
+		for (const line of this.input) {
+			score += this.syntaxErrorScore(line);
 		}
 
-		return `${numFlashes}`;
+		return `${score}`;
 	}
 
 	protected solvePart2(): string {
-		this.sampleLog(`start\n${this.grid.toString()}\n`);
-
-		for (let step = 0; step < 100000; step++) {
-			this.step();
-			const curFlashes = this.countFlashes();
-			if (curFlashes === this.grid.elements.length) {
-				return `${step + 1}`;
+		const scores = [];
+		for (const line of this.input) {
+			const score = this.completionScore(line);
+			if (score > 0) {
+				scores.push(score);
 			}
 		}
 
-		return 'Too many iterations';
+		scores.sort((a, b) => a - b);
+
+		return `${scores[Math.floor(scores.length / 2)]}`;
 	}
 
-	private step(): void {
-		this.grid.elements.forEach((n, i) => this.grid.elements[i] += 1);
+	private syntaxErrorScore(line: string): number {
+		const stack: Array<string> = [];
 
-		let flashed = true;
-		while (flashed) {
-			flashed = false;
+		for (const char of line) {
+			if ('[({<'.includes(char)) {
+				stack.push(char);
+			} else {
+				const opening = stack.pop();
+				if (!opening) {
+					throw 'unexpected char';
+				}
 
-			for (let x = 0; x < this.grid.width; x++) {
-				for (let y = 0; y < this.grid.height; y++) {
-					const coord = new Coord(x, y);
-
-					if (this.grid.getC(coord) > 9) {
-						this.grid.setC(coord, 0);
-						flashed = true;
-
-						this.increment(coord.left());
-						this.increment(coord.right());
-						this.increment(coord.up());
-						this.increment(coord.down());
-						this.increment(coord.upLeft());
-						this.increment(coord.upRight());
-						this.increment(coord.downLeft());
-						this.increment(coord.downRight());
-					}
+				if (
+					(char === ']' && opening !== '[') ||
+					(char === ')' && opening !== '(') ||
+					(char === '}' && opening !== '{') ||
+					(char === '>' && opening !== '<')
+				) {
+					return this.syntaxScores[char];
 				}
 			}
 		}
+		return 0;
 	}
 
-	private increment(coord: Coord): void {
-		const val = this.grid.safeGet(coord);
-		if (val !== undefined && val > 0) {
-			this.grid.setC(coord, val + 1);
+	private completionScore(line: string): number {
+		// Don't count corrupt lines
+		if (this.syntaxErrorScore(line) > 0) {
+			return 0;
 		}
-	}
 
-	private countFlashes(): number {
-		return this.grid.countOccurrences(0);
+		const stack: Array<string> = [];
+
+		for (const char of line) {
+			if ('[({<'.includes(char)) {
+				stack.push(char);
+			} else {
+				stack.pop();
+			}
+		}
+
+		let score = 0;
+		while (stack.length > 0) {
+			score *= 5;
+
+			const opening = stack.pop();
+			score += opening ? this.completionScores[opening] : 0;
+		}
+
+		this.sampleLog(`Score for line ${line} is ${score}`);
+
+		return score;
 	}
 }
 
