@@ -11,6 +11,8 @@ interface Instruction {
 class Day13Solver extends Solver {
 	private grid: GenericGrid<string> = new GenericGrid<string>(0, 0, () => '');
 	private instructions: Array<Instruction> = [];
+	private curWidth = 0;
+	private curHeight = 0;
 
 	public init(inputFile: string): void {
 		const input = InputParser.readLinesInGroups(inputFile);
@@ -31,7 +33,9 @@ class Day13Solver extends Solver {
 			maxY = Math.max(y, maxY);
 		}
 
-		this.grid = new GenericGrid<string>(maxX + 1, maxY + 1, () => '.', undefined, s => s);
+		this.grid = new GenericGrid<string>(maxX + 1, maxY + 1, () => '.');
+		this.curWidth = maxX + 1;
+		this.curHeight = maxY + 1;
 		for (const coord of coords) {
 			this.grid.setC(coord, '#');
 		}
@@ -58,11 +62,23 @@ class Day13Solver extends Solver {
 	protected solvePart1(): string {
 		this.fold(this.instructions[0]);
 
+		this.sampleLog('after fold');
+		this.sampleLog(this.grid.toString());
+
+		this.sampleLog('adjusted width/height');
+		this.sampleLog(this.printGrid());
+
 		return `${this.grid.countOccurrences('#')}`;
 	}
 
 	protected solvePart2(): string {
-		return `${'todo'}`;
+		for (const instr of this.instructions) {
+			this.fold(instr);
+		}
+
+		console.log(this.printGrid());
+
+		return 'see above';
 	}
 
 	private fold(instruction: Instruction) {
@@ -74,27 +90,42 @@ class Day13Solver extends Solver {
 	}
 
 	private foldLeft(from: number) {
-		for (let colDelta = 0; colDelta + from < this.grid.width; colDelta++) {
+		for (let colDelta = 1; colDelta + from < this.grid.width; colDelta++) {
 			for (let row = 0; row < this.grid.height; row++) {
 				const coord = new Coord(from + colDelta, row);
-				if (this.grid.getC(coord) === '#') {
+				const char = this.grid.getC(coord);
+				if (char === '#') {
 					this.grid.setC(coord, '.');
-					this.grid.setC(new Coord(from - colDelta - 1, row), '#');
+					this.grid.setC(coord.left(colDelta * 2), '#');
 				}
 			}
 		}
+		this.curWidth = from;
 	}
 
 	private foldUp(from: number) {
-		for (let rowDelta = 0; rowDelta + from < this.grid.height; rowDelta++) {
+		for (let rowDelta = 1; rowDelta + from < this.grid.height; rowDelta++) {
 			for (let col = 0; col < this.grid.width; col++) {
 				const coord = new Coord(col, from + rowDelta);
-				if (this.grid.getC(coord) === '#') {
+				const char = this.grid.getC(coord);
+				if (char === '#') {
 					this.grid.setC(coord, '.');
-					this.grid.setC(new Coord(col, from - rowDelta - 1), '#');
+					this.grid.setC(coord.up(rowDelta * 2), '#');
 				}
 			}
 		}
+		this.curHeight = from;
+	}
+
+	private printGrid() {
+		let result = '';
+		for (let curY = 0; curY < this.curHeight; curY++) {
+			for (let curX = 0; curX < this.curWidth; curX++) {
+				result += this.grid.getC(new Coord(curX, curY));
+			}
+			result += '\n';
+		}
+		return result;
 	}
 }
 

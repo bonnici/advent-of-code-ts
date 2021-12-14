@@ -15,36 +15,36 @@ export default class Coord {
 		return `${this.x},${this.y}`;
 	}
 
-	public left(): Coord {
-		return new Coord(this.x - 1, this.y);
+	public left(amount = 1): Coord {
+		return new Coord(this.x - amount, this.y);
 	}
 
-	public right(): Coord {
-		return new Coord(this.x + 1, this.y);
+	public right(amount = 1): Coord {
+		return new Coord(this.x + amount, this.y);
 	}
 
-	public up(): Coord {
-		return new Coord(this.x, this.y - 1);
+	public up(amount = 1): Coord {
+		return new Coord(this.x, this.y - amount);
 	}
 
-	public down(): Coord {
-		return new Coord(this.x, this.y + 1);
+	public down(amount = 1): Coord {
+		return new Coord(this.x, this.y + amount);
 	}
 
-	public upLeft(): Coord {
-		return new Coord(this.x - 1, this.y - 1);
+	public upLeft(amount = 1): Coord {
+		return new Coord(this.x - amount, this.y - amount);
 	}
 
-	public upRight(): Coord {
-		return new Coord(this.x + 1, this.y - 1);
+	public upRight(amount = 1): Coord {
+		return new Coord(this.x + amount, this.y - amount);
 	}
 
-	public downLeft(): Coord {
-		return new Coord(this.x - 1, this.y + 1);
+	public downLeft(amount = 1): Coord {
+		return new Coord(this.x - amount, this.y + amount);
 	}
 
-	public downRight(): Coord {
-		return new Coord(this.x + 1, this.y + 1);
+	public downRight(amount = 1): Coord {
+		return new Coord(this.x + amount, this.y + amount);
 	}
 
 }

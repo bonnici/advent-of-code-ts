@@ -163,7 +163,7 @@ export class CliDriver {
 				{stdio: 'inherit'}
 			);
 		} catch (e) {
-			console.error('Error running solution', e);
+			console.error('Error running solution', JSON.stringify(e));
 		}
 	}
 

@@ -14,8 +14,8 @@ export default class GenericGrid<Type> {
 		public width: number,
 		public height: number,
 		private initFn: () => Type,
-		private compareFn?: (a: Type, b: Type) => number,
-		private renderFn?: (a: Type) => string, // Should render single character
+		private compareFn: (a: Type, b: Type) => number = (a, b) => a === b ? 0 : 1,
+		private renderFn: (a: Type) => string = (a => `${a}`), // Should render single character
 	) {
 		this.elems = new Array<Type>(width * height);
 		this.elems = Array.from({ length: width * height }, initFn);

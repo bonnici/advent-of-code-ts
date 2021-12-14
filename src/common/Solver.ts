@@ -38,26 +38,30 @@ export abstract class Solver {
 	}
 
 	public solveForArgs(): void {
-		const args = process.argv.slice(2);
-		const fileName = args[0] || 'input';
-		const part = args[1] || '1';
-		const expectedFile = args[2] || undefined;
-		const isSample = !!expectedFile;
+		try {
+			const args = process.argv.slice(2);
+			const fileName = args[0] || 'input';
+			const part = args[1] || '1';
+			const expectedFile = args[2] || undefined;
+			const isSample = !!expectedFile;
 
-		this.init(fileName);
+			this.init(fileName);
 
-		const solution = part === '1' ? this.runPart1(isSample) : this.runPart2(isSample);
+			const solution = part === '1' ? this.runPart1(isSample) : this.runPart2(isSample);
 
-		console.log(`Part ${part} solution: ${chalk.bold(solution.result)}`);
-		console.log(`Part ${part} time taken: ${solution.timeTaken} ms`);
+			console.log(`Part ${part} solution: ${chalk.bold(solution.result)}`);
+			console.log(`Part ${part} time taken: ${solution.timeTaken} ms`);
 
-		if (expectedFile) {
-			const expectedOutput = fs.readFileSync(expectedFile, 'utf8').trim();
-			if (solution.result.localeCompare(expectedOutput) === 0) {
-				console.log(chalk.green(`Solution ${chalk.bold(solution.result)} matched expected output.`));
-			} else {
-				console.log(chalk.red(`Solution ${chalk.bold(solution.result)} did not match expected output ${chalk.underline(expectedOutput)}.`));
+			if (expectedFile) {
+				const expectedOutput = fs.readFileSync(expectedFile, 'utf8').trim();
+				if (solution.result.localeCompare(expectedOutput) === 0) {
+					console.log(chalk.green(`Solution ${chalk.bold(solution.result)} matched expected output.`));
+				} else {
+					console.log(chalk.red(`Solution ${chalk.bold(solution.result)} did not match expected output ${chalk.underline(expectedOutput)}.`));
+				}
 			}
+		} catch (e) {
+			console.log('Error running solution: ', e);
 		}
 	}
 
