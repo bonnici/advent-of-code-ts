@@ -68,6 +68,7 @@ class Day15Solver extends Solver {
 		// is a path of length zero), all other tentative distances are initially set to infinity. Set the initial node as
 		// current.
 		const distances: Map<string, number> = new Map();
+		// eslint-disable-next-line
 		const unvisitedSet: any = new RedisSortedSet();
 
 		grid.forEachCoord(coord => {
@@ -116,6 +117,7 @@ class Day15Solver extends Solver {
 		toCoord: Coord,
 		grid: GenericGrid<number>,
 		distances: Map<string, number>,
+		// eslint-disable-next-line
 		unvisitedSet: any,
 	): void {
 		const toCost = grid.safeGet(toCoord);
