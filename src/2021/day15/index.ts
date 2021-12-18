@@ -2,12 +2,9 @@ import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
 import GenericGrid from '../../common/GenericGrid';
 import Coord from '../../common/Coord';
-import PriorityQueue  from 'priorityqueuejs';
 
-interface QueueEntry {
-	coord: string;
-	distance: number;
-}
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const RedisSortedSet = require('redis-sorted-set');
 
 class Day15Solver extends Solver {
 	private inputFile = '';
@@ -58,6 +55,8 @@ class Day15Solver extends Solver {
 
 	private shortestPath(grid: GenericGrid<number>, start: Coord, target: Coord): string {
 		// Dijkstra's algorithm
+		// todo - refactor (may not need distances map and can probably get current from unvisited set)
+		// todo - move to generic grid class? or other helper function
 		const targetStr = target.toString();
 
 		this.initProgress(grid.elements.length);
@@ -69,19 +68,17 @@ class Day15Solver extends Solver {
 		// is a path of length zero), all other tentative distances are initially set to infinity. Set the initial node as
 		// current.
 		const distances: Map<string, number> = new Map();
-		const visitedSet: Set<string> = new Set();
-		const unvisitedSet: Set<string> = new Set();
-		const unvisitedQueue = new PriorityQueue<QueueEntry>((a, b) => b.distance - a.distance);
+		const unvisitedSet: any = new RedisSortedSet();
+
 		grid.forEachCoord(coord => {
 			const str = coord.toString();
-			unvisitedSet.add(str);
+			unvisitedSet.add(str, str === start.toString() ? 0 : Number.MAX_SAFE_INTEGER);
 			distances.set(str, Number.MAX_SAFE_INTEGER);
-			unvisitedQueue.enq({ coord: str, distance: str === start.toString() ? 0 : Number.MAX_SAFE_INTEGER });
 		});
 		distances.set(start.toString(), 0);
 		let current = start;
 
-		for(;;) {
+		for (;;) {
 			// For the current node, consider all of its unvisited neighbors and calculate their tentative distances through
 			// the current node. Compare the newly calculated tentative distance to the current assigned value and assign the
 			// smaller one.
@@ -91,40 +88,43 @@ class Day15Solver extends Solver {
 				throw 'Unexpected current node';
 			}
 
-			this.consider(currentCost, current.left(), grid, distances);
-			this.consider(currentCost, current.right(), grid, distances);
-			this.consider(currentCost, current.up(), grid, distances);
-			this.consider(currentCost, current.down(), grid, distances);
+			// If the destination node has been marked visited, then stop. The algorithm has finished.
+			if (currentStr === targetStr) {
+				this.stopProgress();
+				return `${currentCost}`;
+			}
+
+			this.consider(currentCost, current.left(), grid, distances, unvisitedSet);
+			this.consider(currentCost, current.right(), grid, distances, unvisitedSet);
+			this.consider(currentCost, current.up(), grid, distances, unvisitedSet);
+			this.consider(currentCost, current.down(), grid, distances, unvisitedSet);
 
 			// When we are done considering all of the unvisited neighbors of the current node, mark the current node as
 			// visited and remove it from the unvisited set. A visited node will never be checked again.
-			visitedSet.add(currentStr);
-			unvisitedSet.delete(currentStr);
+			unvisitedSet.rem(currentStr);
 			this.incrementProgress();
-
-			// If the destination node has been marked visited, then stop. The algorithm has finished.
-			if (visitedSet.has(targetStr)) {
-				this.stopProgress();
-				return `${distances.get(targetStr)}`;
-			}
 
 			// Otherwise, select the unvisited node that is marked with the smallest tentative distance, set it as the new
 			// current node, and go back to step 3.
-			const costs = [...unvisitedSet.values()].map(coord => ({
-				key: coord,
-				distance: distances.get(coord) || Number.MAX_SAFE_INTEGER,
-			}));
-			const best = costs.reduce((acc, cur) => cur.distance < acc.distance ? cur : acc, { key: '', distance: Number.MAX_SAFE_INTEGER} );
-			current = Coord.fromString(best.key);
+			const bestUnvisited = unvisitedSet.range(0, 0)[0];
+			current = Coord.fromString(bestUnvisited);
 		}
 	}
 
-	private consider(fromCost: number, toCoord: Coord, grid: GenericGrid<number>, distances: Map<string, number>): void {
+	private consider(
+		fromCost: number,
+		toCoord: Coord,
+		grid: GenericGrid<number>,
+		distances: Map<string, number>,
+		unvisitedSet: any,
+	): void {
 		const toCost = grid.safeGet(toCoord);
 		if (toCost !== undefined) {
 			const targetCost = fromCost + toCost;
-			if (targetCost < (distances.get(toCoord.toString()) || Number.MAX_SAFE_INTEGER)) {
-				distances.set(toCoord.toString(), targetCost);
+			const toStr = toCoord.toString();
+			if (targetCost < (distances.get(toStr) || Number.MAX_SAFE_INTEGER)) {
+				distances.set(toStr, targetCost);
+				unvisitedSet.add(toStr, targetCost);
 			}
 		}
 	}

@@ -130,11 +130,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.10.tgz#7aa732cc47341c12a16b7d562f519c2383b6d4fc"
   integrity sha512-S63Dlv4zIPb8x6MMTgDq5WWRJQe56iBEY0O3SOFA9JrRienkOVDXSXBjjJw6HTNQYSE2JI6GMCR6LVbIMHJVvA==
 
-"@types/priorityqueuejs@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/priorityqueuejs/-/priorityqueuejs-1.0.1.tgz#6eaac3247a4c5cefc94482e5d87c3730b35f5053"
-  integrity sha1-bqrDJHpMXO/JRILl2Hw3MLNfUFM=
-
 "@types/through@*":
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/through/-/through-0.0.30.tgz#e0e42ce77e897bd6aead6f6ea62aeb135b8a3895"
@@ -1105,11 +1100,6 @@ prelude-ls@^1.2.1:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
-priorityqueuejs@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/priorityqueuejs/-/priorityqueuejs-2.0.0.tgz#96064040edd847ee9dd3013d8e16297399a6bd4f"
-  integrity sha512-19BMarhgpq3x4ccvVi8k2QpJZcymo/iFUcrhPd4V96kYGovOdTsWwy7fxChYi4QY+m2EnGBWSX9Buakz+tWNQQ==
-
 progress@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
@@ -1133,6 +1123,11 @@ readable-stream@^3.4.0:
     inherits "^2.0.3"
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
+
+redis-sorted-set@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/redis-sorted-set/-/redis-sorted-set-2.0.0.tgz#9e1ce6ac63a72196bc3b194378c2ee89160921fa"
+  integrity sha1-nhzmrGOnIZa8OxlDeMLuiRYJIfo=
 
 regexpp@^3.1.0:
   version "3.2.0"
