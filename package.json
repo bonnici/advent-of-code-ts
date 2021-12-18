@@ -15,6 +15,7 @@
     "@types/cli-progress": "^3.9.2",
     "@types/inquirer": "^7.3.3",
     "@types/node": "^16.7.10",
+    "@types/priorityqueuejs": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
     "cross-env": "^7.0.3",
@@ -27,6 +28,7 @@
     "chalk": "^4.1.2",
     "cli-progress": "^3.9.0",
     "handlebars": "^4.7.7",
-    "inquirer": "^8.1.2"
+    "inquirer": "^8.1.2",
+    "priorityqueuejs": "^2.0.0"
   }
 }

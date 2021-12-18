@@ -11,6 +11,21 @@ y is going down from 0 to height.
 export default class Coord {
 	constructor(public x: number, public y: number) {}
 
+	public static fromString(str: string): Coord {
+		const split = str.split(',');
+		if (split.length !== 2) {
+			throw 'String is not coord';
+		}
+		const x = parseInt(split[0]);
+		const y = parseInt(split[1]);
+
+		if (isNaN(x) || isNaN(y)) {
+			throw 'Coords are not numbers';
+		}
+
+		return new Coord(x, y);
+	}
+
 	public toString(): string {
 		return `${this.x},${this.y}`;
 	}

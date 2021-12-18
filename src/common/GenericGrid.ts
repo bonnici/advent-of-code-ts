@@ -60,6 +60,14 @@ export default class GenericGrid<Type> {
 		return this.elems.reduce((acc, cur) => acc + (compareFn(cur, val) === 0 ? 1 : 0), 0);
 	}
 
+	public forEachCoord(fn: (coord: Coord) => void): void {
+		for (let x = 0; x < this.width; x++) {
+			for (let y = 0; y < this.height; y++) {
+				fn(new Coord(x, y));
+			}
+		}
+	}
+
 	public toString(): string {
 		const renderFn = this.renderFn; // Needed to appease TypeScript
 
