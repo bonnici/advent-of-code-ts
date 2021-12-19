@@ -55,8 +55,6 @@ class Day15Solver extends Solver {
 
 	private shortestPath(grid: GenericGrid<number>, start: Coord, target: Coord): string {
 		// Dijkstra's algorithm
-		// todo - refactor (may not need distances map and can probably get current from unvisited set)
-		// todo - move to generic grid class? or other helper function
 		const targetStr = target.toString();
 
 		this.initProgress(grid.elements.length);
