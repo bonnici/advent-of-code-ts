@@ -16,9 +16,25 @@ export default class GenericGrid<Type> {
 		private initFn: () => Type,
 		private compareFn: (a: Type, b: Type) => number = (a, b) => a === b ? 0 : 1,
 		private renderFn: (a: Type) => string = (a => `${a}`), // Should render single character
+		elems?: Array<Type>, // must be correct size
 	) {
-		this.elems = new Array<Type>(width * height);
-		this.elems = Array.from({ length: width * height }, initFn);
+		if (elems) {
+			this.elems = elems;
+		} else {
+			this.elems = new Array<Type>(width * height);
+			this.elems = Array.from({length: width * height}, initFn);
+		}
+	}
+
+	public static copy<U>(grid: GenericGrid<U>): GenericGrid<U> {
+		return new GenericGrid<U>(
+			grid.width,
+			grid.height,
+			grid.initFn,
+			grid.compareFn,
+			grid.renderFn,
+			[...grid.elems],
+		);
 	}
 
 	public get elements(): Array<Type> {
