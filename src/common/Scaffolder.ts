@@ -12,7 +12,7 @@ import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
 
 class Day{{day}}Solver extends Solver {
-	private input: Array<any> = [];
+	private input: Array<string> = [];
 
 	public init(inputFile: string): void {
 		this.input = InputParser.readLines(inputFile);

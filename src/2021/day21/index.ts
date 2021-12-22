@@ -1,6 +1,6 @@
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
-import CircularArray from "../../common/CircularArray";
+import CircularArray from '../../common/CircularArray';
 
 class Day21Solver extends Solver {
 	private player1Position = 0;
