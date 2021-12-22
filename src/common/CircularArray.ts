@@ -26,6 +26,17 @@ export default class CircularArray<Type> {
 		return this.array[index];
 	}
 
+	public safeGet(index: number): Type {
+		while (index < 0) {
+			index += this.array.length;
+		}
+		while (index >= this.array.length) {
+			index -= this.array.length;
+		}
+
+		return this.array[index];
+	}
+
 	public remove(index: number): Type {
 		const value = this.get(index);
 
