@@ -40,10 +40,15 @@ export abstract class Solver {
 	public solveForArgs(): void {
 		try {
 			const args = process.argv.slice(2);
-			const fileName = args[0] || 'input';
+			const fileName = args[0];
 			const part = args[1] || '1';
 			const expectedFile = args[2] || undefined;
 			const isSample = !!expectedFile;
+
+			if (!fileName) {
+				// probably unit testing
+				return;
+			}
 
 			this.init(fileName);
 
