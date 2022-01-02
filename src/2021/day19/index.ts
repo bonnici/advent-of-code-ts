@@ -6,6 +6,10 @@ interface Scanner {
 	coords: Array<Coord3d>;
 }
 
+interface OrientedScanner extends Scanner {
+	relativePosition: Coord3d;
+}
+
 class Day19Solver extends Solver {
 	private scanners: Array<Scanner> = [];
 
@@ -22,44 +26,36 @@ class Day19Solver extends Solver {
 	}
 
 	protected solvePart1(): string {
-		// for each scanner (28)
-		//   for each other scanner (27)
-		//     for each pair of coordinates (26*26)
-		//       for each orientation (48)
-		this.initProgress(28*27*26*26*48);
+		const orientedScanners = this.orientScanners();
 
-		// Taking scanner 0 as the "correct" location and orientation
-		const matchedScanners = new Set([0]);
-
-		for (let i = 0; i < this.scanners.length; i++) {
-			const scanner = this.scanners[i];
-			const coordSet = new Set(scanner.coords.map(c => c.toString()));
-
-			for (let j = 0; j < this.scanners.length; j++) {
-				if (i === j) {
-					continue;
-				}
-				if (matchedScanners.has(j)) {
-					continue;
-				}
-
-				const other = this.scanners[j];
-
-				const isMatched = this.findMatch(scanner, other, coordSet);
-				if (isMatched) {
-					this.sampleLog(`Found match - ${i} and ${j}`);
-					matchedScanners.add(j);
-				}
+		const allCoords = new Set();
+		for (const scanner of orientedScanners) {
+			for (const coord of scanner.coords) {
+				allCoords.add(coord.toString());
 			}
 		}
 
-		this.stopProgress();
-
-		return `${'todo'}`;
+		return `${allCoords.size}`;
 	}
 
 	protected solvePart2(): string {
-		return `${'todo'}`;
+		const orientedScanners = this.orientScanners();
+
+		let maxDistance = 0;
+
+		for (let i = 0; i < orientedScanners.length; i++) {
+			const first = orientedScanners[i];
+			for (let j = i + 1; j < orientedScanners.length; j++) {
+				const second = orientedScanners[j];
+				const distance =
+					Math.abs(first.relativePosition.x - second.relativePosition.x) +
+					Math.abs(first.relativePosition.y - second.relativePosition.y) +
+					Math.abs(first.relativePosition.z - second.relativePosition.z);
+				maxDistance = Math.max(maxDistance, distance);
+			}
+		}
+
+		return `${maxDistance}`;
 	}
 
 	// Change orientation of a coordinate. inverse is 0-7 to invert none or all of x, y, z. swap is 0-5 to swap order
@@ -127,8 +123,10 @@ class Day19Solver extends Solver {
 		}
 	}
 
-	private findMatch(scanner: Scanner, other: Scanner, coordSet: Set<string>): boolean {
-		for (const origin of scanner.coords) {
+	private findMatch(scanner: Scanner, other: Scanner, coordSet: Set<string>): OrientedScanner | undefined {
+		for (let i = 0; i < scanner.coords.length - 11; i++) { // if there are less than 12 coords left to check, we can't possibly find 12 matches
+			const origin = scanner.coords[i];
+
 			for (const target of other.coords) {
 				for (let inverse = 0; inverse < 8; inverse++) {
 					for (let swap = 0; swap < 6; swap++) {
@@ -147,16 +145,58 @@ class Day19Solver extends Solver {
 
 						if (matches >= 12) {
 							this.sampleLog(`Found match - inverse=${inverse}, swap=${swap}`);
-							return true;
+							return { coords: allReoriented, relativePosition: new Coord3d(xDelta, yDelta, zDelta) };
 						}
-
-						this.incrementProgress();
 					}
 				}
 			}
 		}
 
-		return false;
+		return undefined;
+	}
+
+	private orientScanners(): Array<OrientedScanner> {
+		this.initProgress(this.scanners.length);
+
+		// Taking scanner 0 as the "correct" location and orientation
+		const orientedScanners = [{ coords: this.scanners[0].coords, relativePosition: new Coord3d(0, 0, 0) }];
+		const orientedIndices = new Set([0]);
+		this.incrementProgress();
+		const consideredIndices: Set<number> = new Set();
+
+		// consider each oriented scanner in turn until there is nothing left to orient
+		while (orientedIndices.size < this.scanners.length) {
+			for (let i = 0; i < orientedScanners.length; i++) {
+				if (consideredIndices.has(i)) {
+					continue;
+				}
+
+				const scanner = orientedScanners[i];
+				const coordSet = new Set(scanner.coords.map(c => c.toString()));
+
+				// check all unoriented scanners and see if we can orient it to the current one
+				for (let j = 0; j < this.scanners.length; j++) {
+					if (orientedIndices.has(j)) {
+						continue;
+					}
+					const other = this.scanners[j];
+					this.sampleLog(`Checking ${i} and ${j}`);
+
+					const orientedScanner = this.findMatch(scanner, other, coordSet);
+					if (orientedScanner) {
+						this.sampleLog(`Found match - ${i} and ${j}`);
+						orientedScanners.push(orientedScanner);
+						orientedIndices.add(j);
+						this.incrementProgress();
+					}
+				}
+
+				consideredIndices.add(i);
+			}
+		}
+
+		this.stopProgress();
+		return orientedScanners;
 	}
 }
 
