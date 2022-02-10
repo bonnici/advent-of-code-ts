@@ -12,8 +12,10 @@ The solutions include:
  [advent-of-code-2019](https://github.com/bonnici/advent-of-code-2019)
 
 To run interactively, use `yarn cli` or `npx ts-node src/common/CliDriver.ts`. The CLI will look for the latest solution
-code in the latest year and start running for that day and year. Add a year parameter to start for a different year, 
-e.g. `yarn cli 2018`. The CLI will either run a solution or scaffold the code for another day's solution.
+code in the latest year and start running for that day and year. Add an optional year and day parameter to start for a 
+year and day other than the latest day available in code, e.g. `yarn cli 2018` will start from the latest 2018 code, and
+`yarn cli 2018 12` will start on 2018 day 12. The CLI can be used to both run a solution and scaffold the code for 
+another day's solution.
 
 To run a single solution without using the CLI, use a command like:
 `cross-env npx ts-node src/day4/index.ts 2020/day4/input.txt 2 expected.txt`

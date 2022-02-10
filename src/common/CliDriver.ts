@@ -8,8 +8,8 @@ export class CliDriver {
 	private currentYear = 0;
 	private currentDay = 0;
 
-	public async run(yearOverride?: number): Promise<void> {
-		this.detectYearAndDay(yearOverride);
+	public async run(yearOverride?: number, dayOverride?: number): Promise<void> {
+		this.detectYearAndDay(yearOverride, dayOverride);
 
 		for (; ;) {
 			const mainOption = await this.promptMainOption();
@@ -34,7 +34,7 @@ export class CliDriver {
 				break;
 			case 'next':
 				await CliDriver.scaffold(this.currentYear, this.currentDay + 1);
-				this.detectYearAndDay();
+				this.currentDay = this.currentDay + 1;
 				break;
 			case 'scaffold':
 				await CliDriver.promptScaffold(this.currentYear, this.currentDay + 1);
@@ -195,16 +195,17 @@ export class CliDriver {
 		return 1;
 	}
 
-	private detectYearAndDay(yearOverride?: number) {
+	private detectYearAndDay(yearOverride?: number, dayOverride?: number) {
 		this.currentYear = yearOverride || CliDriver.detectCurrentYear();
-		this.currentDay = CliDriver.detectCurrentDay(this.currentYear);
+		this.currentDay = dayOverride || CliDriver.detectCurrentDay(this.currentYear);
 	}
 }
 
 const args = process.argv.slice(2);
 const yearOverride = parseInt(args[0]) || undefined;
+const dayOverride = parseInt(args[1]) || undefined;
 
-new CliDriver().run(yearOverride)
+new CliDriver().run(yearOverride, dayOverride)
 	.then(() => {
 		console.log('Done.');
 	})

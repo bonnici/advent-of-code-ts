@@ -2,6 +2,60 @@ import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
 import CircularArray from '../../common/CircularArray';
 
+export class GameState {
+	constructor(public player1Pos: number, public player1Score: number, public player2Pos: number, public player2Score: number) {}
+
+	public static fromString(input: string): GameState {
+		const split = input.split('_');
+		if (split.length !== 4) {
+			throw 'invalid string';
+		}
+		return new GameState(parseInt(split[0]), parseInt(split[1]), parseInt(split[2]), parseInt(split[3]));
+	}
+
+	public toString(): string {
+		return `${this.player1Pos}_${this.player1Score}_${this.player2Pos}_${this.player2Score}`;
+	}
+
+	public winner(): number {
+		if (this.player1Score > 20) {
+			return 1;
+		} else if (this.player2Score > 20) {
+			return 2;
+		} else {
+			return 0;
+		}
+	}
+
+	public roll(player: number, roll: number): GameState {
+		if (player !== 1 && player !== 2) {
+			throw 'invalid player';
+		}
+
+		if (roll < 3 || roll > 9) {
+			throw 'invalid roll';
+		}
+
+		if (player === 1) {
+			let newPos = this.player1Pos + roll;
+			if (newPos > 10) {
+				newPos -= 10;
+			}
+			const newScore = this.player1Score + newPos;
+
+			return new GameState(newPos, newScore, this.player2Pos, this.player2Score);
+		} else {
+			let newPos = this.player2Pos + roll;
+			if (newPos > 10) {
+				newPos -= 10;
+			}
+			const newScore = this.player2Score + newPos;
+
+			return new GameState(this.player1Pos, this.player1Score, newPos, newScore);
+		}
+	}
+}
+
 class Day21Solver extends Solver {
 	private player1Position = 0;
 	private player2Position = 0;
@@ -74,7 +128,90 @@ class Day21Solver extends Solver {
 	}
 
 	protected solvePart2(): string {
-		return `${'todo'}`;
+		// Map of dice roll to number of combinations that could have resulted in that roll
+		const possibleRolls = [3, 4, 5, 6, 7, 8, 9];
+		const rollCombos: { [roll: number]: number} = {
+			3: 1,
+			4: 3,
+			5: 6,
+			6: 7,
+			7: 6,
+			8: 3,
+			9: 1,
+		};
+
+		let player1Universes = 0;
+		let player2Universes = 0;
+
+		// Map of game states (as string) to number of universes that lead to that game state
+		let gameStates: Map<string, number> = new Map();
+		const startingState = `${this.player1Position + 1}_0_${this.player2Position + 1}_0`;
+		gameStates.set(startingState, 1);
+		let curPlayer = 1;
+
+		this.initProgress(20);
+
+		let numRolls = 0;
+
+		while (gameStates.size > 0) {
+			// make new map of game states to hold remaining states after the next roll
+			const newGameStates: Map<string, number> = new Map();
+
+			// go through each game state
+			gameStates.forEach((numUniverses, gameStateStr) => {
+				const gameState = GameState.fromString(gameStateStr);
+				// go through each possible next roll
+				for (const roll of possibleRolls) {
+					if (numRolls < 3 || numRolls > 17) {
+						this.sampleLog(`Rolling a ${roll} with starting state ${gameState.toString()} in ${numUniverses} universes`);
+					}
+					const newState = gameState.roll(curPlayer, roll);
+
+					// calculate the new number of universes that lead to this game state
+					const rollUniverses = numUniverses * rollCombos[roll];
+
+					// if the game has ended, increment the number of universes in which the player won
+					const winner = newState.winner();
+					if (winner === 1) {
+						player1Universes += rollUniverses;
+						if (numRolls < 3 || numRolls > 16) {
+							this.sampleLog(`Player 1 won in ${rollUniverses} universes, ending with state ${newState.toString()}`);
+						}
+					} else if (winner === 2) {
+						player2Universes += rollUniverses;
+						if (numRolls < 3 || numRolls > 16) {
+							this.sampleLog(`Player 2 won in ${rollUniverses} universes, ending with state ${newState.toString()}`);
+						}
+					} else {
+						// if not, add the updated game state to new set of game states
+						const newStateStr = newState.toString();
+						const existing = newGameStates.get(newStateStr);
+						if (existing) {
+							newGameStates.set(newStateStr, existing + rollUniverses);
+						} else {
+							newGameStates.set(newStateStr, rollUniverses);
+						}
+						if (numRolls < 3 || numRolls > 16) {
+							this.sampleLog(`No-one won in ${rollUniverses} universes, ending with state ${newState.toString()}`);
+						}
+					}
+				}
+			});
+
+			curPlayer = (curPlayer === 1) ? 2 : 1;
+			gameStates = newGameStates;
+
+			numRolls++;
+			this.sampleLog(`After ${numRolls} rolls, we have ${gameStates.size} game states`);
+
+			this.incrementProgress();
+		}
+
+		this.stopProgress();
+
+		const winningUniverses = Math.max(player1Universes, player2Universes);
+
+		return `${winningUniverses}`;
 	}
 }
 
