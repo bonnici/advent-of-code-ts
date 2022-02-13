@@ -571,8 +571,7 @@ class Day23Solver extends Solver {
 		});
 		if (currentConfigStr === moveConfig8) {
 			if (amphipod === 'D' && startNode === 'RD1' && endNode === 'H5') {
-				const moveCost = this.moveCost(amphipod, startNode, endNode, configuration, linkCost);
-				this.sampleLog(logStr); // here
+				this.sampleLog(logStr);
 			}
 		}
 
