@@ -6,13 +6,14 @@ import GenericDag from '../../common/GenericDag';
 const RedisSortedSet = require('redis-sorted-set');
 
 class Day23Solver extends Solver {
+	private input: Array<string> = [];
 	private dag: GenericDag<string> = new GenericDag<string>();
 	private initialValues: {[node: string]: string} = {};
 	private solvedValues: {[node: string]: string} = {};
 	private energyPerStep: Map<string, number> = new Map();
 
 	public init(inputFile: string): void {
-		const input = InputParser.readLines(inputFile);
+		this.input = InputParser.readLines(inputFile);
 
 		this.dag = new GenericDag<string>();
 
@@ -33,76 +34,28 @@ class Day23Solver extends Solver {
 		Arranging as a graph with the valid hallway spots and room spots, and the cost in squares between these spots.
 		*/
 
-		this.dag.addLink('H1', 'RA1', true, 3);
-		this.dag.addLink('H2', 'RA1', true, 2);
-		this.dag.addLink('H3', 'RA1', true, 2);
-		this.dag.addLink('H4', 'RA1', true, 4);
-		this.dag.addLink('H5', 'RA1', true, 6);
-		this.dag.addLink('H6', 'RA1', true, 8);
-		this.dag.addLink('H7', 'RA1', true, 9);
-		this.dag.addLink('H1', 'RA2', true, 4);
-		this.dag.addLink('H2', 'RA2', true, 3);
-		this.dag.addLink('H3', 'RA2', true, 3);
-		this.dag.addLink('H4', 'RA2', true, 5);
-		this.dag.addLink('H5', 'RA2', true, 7);
-		this.dag.addLink('H6', 'RA2', true, 9);
-		this.dag.addLink('H7', 'RA2', true, 10);
+		this.energyPerStep.set('A', 1);
+		this.energyPerStep.set('B', 10);
+		this.energyPerStep.set('C', 100);
+		this.energyPerStep.set('D', 1000);
+	}
 
-		this.dag.addLink('H1', 'RB1', true, 5);
-		this.dag.addLink('H2', 'RB1', true, 4);
-		this.dag.addLink('H3', 'RB1', true, 2);
-		this.dag.addLink('H4', 'RB1', true, 2);
-		this.dag.addLink('H5', 'RB1', true, 4);
-		this.dag.addLink('H6', 'RB1', true, 6);
-		this.dag.addLink('H7', 'RB1', true, 7);
-		this.dag.addLink('H1', 'RB2', true, 6);
-		this.dag.addLink('H2', 'RB2', true, 5);
-		this.dag.addLink('H3', 'RB2', true, 3);
-		this.dag.addLink('H4', 'RB2', true, 3);
-		this.dag.addLink('H5', 'RB2', true, 5);
-		this.dag.addLink('H6', 'RB2', true, 7);
-		this.dag.addLink('H7', 'RB2', true, 8);
-
-		this.dag.addLink('H1', 'RC1', true, 7);
-		this.dag.addLink('H2', 'RC1', true, 6);
-		this.dag.addLink('H3', 'RC1', true, 4);
-		this.dag.addLink('H4', 'RC1', true, 2);
-		this.dag.addLink('H5', 'RC1', true, 2);
-		this.dag.addLink('H6', 'RC1', true, 4);
-		this.dag.addLink('H7', 'RC1', true, 5);
-		this.dag.addLink('H1', 'RC2', true, 8);
-		this.dag.addLink('H2', 'RC2', true, 7);
-		this.dag.addLink('H3', 'RC2', true, 5);
-		this.dag.addLink('H4', 'RC2', true, 3);
-		this.dag.addLink('H5', 'RC2', true, 3);
-		this.dag.addLink('H6', 'RC2', true, 5);
-		this.dag.addLink('H7', 'RC2', true, 6);
-
-		this.dag.addLink('H1', 'RD1', true, 9);
-		this.dag.addLink('H2', 'RD1', true, 8);
-		this.dag.addLink('H3', 'RD1', true, 6);
-		this.dag.addLink('H4', 'RD1', true, 4);
-		this.dag.addLink('H5', 'RD1', true, 2);
-		this.dag.addLink('H6', 'RD1', true, 2);
-		this.dag.addLink('H7', 'RD1', true, 3);
-		this.dag.addLink('H1', 'RD2', true, 10);
-		this.dag.addLink('H2', 'RD2', true, 9);
-		this.dag.addLink('H3', 'RD2', true, 7);
-		this.dag.addLink('H4', 'RD2', true, 5);
-		this.dag.addLink('H5', 'RD2', true, 3);
-		this.dag.addLink('H6', 'RD2', true, 3);
-		this.dag.addLink('H7', 'RD2', true, 4);
+	protected solvePart1(): string {
+		this.addRoomLinks('A', 2);
+		this.addRoomLinks('B', 2);
+		this.addRoomLinks('C', 2);
+		this.addRoomLinks('D', 2);
 
 		// input is trimmed, so front part of room index will be different to back part of room index
 		this.initialValues = {
-			'RA1': input[2].charAt(3),
-			'RA2': input[3].charAt(1),
-			'RB1': input[2].charAt(5),
-			'RB2': input[3].charAt(3),
-			'RC1': input[2].charAt(7),
-			'RC2': input[3].charAt(5),
-			'RD1': input[2].charAt(9),
-			'RD2': input[3].charAt(7),
+			'RA1': this.input[2].charAt(3),
+			'RA2': this.input[3].charAt(1),
+			'RB1': this.input[2].charAt(5),
+			'RB2': this.input[3].charAt(3),
+			'RC1': this.input[2].charAt(7),
+			'RC2': this.input[3].charAt(5),
+			'RD1': this.input[2].charAt(9),
+			'RD2': this.input[3].charAt(7),
 		};
 
 		this.solvedValues = {
@@ -116,13 +69,6 @@ class Day23Solver extends Solver {
 			'RD2': 'D',
 		};
 
-		this.energyPerStep.set('A', 1);
-		this.energyPerStep.set('B', 10);
-		this.energyPerStep.set('C', 100);
-		this.energyPerStep.set('D', 1000);
-	}
-
-	protected solvePart1(): string {
 		this.sampleLog(this.dag.toString());
 
 		// let result = this.recursivelyOrganise(this.initialValues, 0, new Set(), Number.MAX_SAFE_INTEGER);
@@ -131,7 +77,74 @@ class Day23Solver extends Solver {
 	}
 
 	protected solvePart2(): string {
-		return `${'todo'}`;
+		this.addRoomLinks('A', 4);
+		this.addRoomLinks('B', 4);
+		this.addRoomLinks('C', 4);
+		this.addRoomLinks('D', 4);
+
+		// input is trimmed, so front part of room index will be different to back part of room index
+		this.initialValues = {
+			'RA1': this.input[2].charAt(3),
+			'RA2': 'D',
+			'RA3': 'D',
+			'RA4': this.input[3].charAt(1),
+			'RB1': this.input[2].charAt(5),
+			'RB2': 'C',
+			'RB3': 'B',
+			'RB4': this.input[3].charAt(3),
+			'RC1': this.input[2].charAt(7),
+			'RC2': 'B',
+			'RC3': 'A',
+			'RC4': this.input[3].charAt(5),
+			'RD1': this.input[2].charAt(9),
+			'RD2': 'A',
+			'RD3': 'C',
+			'RD4': this.input[3].charAt(7),
+		};
+
+		this.solvedValues = {
+			'RA1': 'A',
+			'RA2': 'A',
+			'RA3': 'A',
+			'RA4': 'A',
+			'RB1': 'B',
+			'RB2': 'B',
+			'RB3': 'B',
+			'RB4': 'B',
+			'RC1': 'C',
+			'RC2': 'C',
+			'RC3': 'C',
+			'RC4': 'C',
+			'RD1': 'D',
+			'RD2': 'D',
+			'RD3': 'D',
+			'RD4': 'D',
+		};
+
+		this.sampleLog(this.dag.toString());
+
+		const result = 'todo';
+		//const result = this.organiseDijkstra();
+		return `${result}`;
+	}
+
+	private addRoomLinks(amphipod: string, numSpots: number): void {
+		const distanceFromHallwayToOutsideRoom: {[key: string]: {[key: number]: number}} = {
+			'A': { 1: 2, 2: 1, 3: 1, 4: 3, 5: 5, 6: 7, 7: 8 },
+			'B': { 1: 4, 2: 3, 3: 1, 4: 1, 5: 3, 6: 5, 7: 6 },
+			'C': { 1: 6, 2: 5, 3: 3, 4: 1, 5: 1, 6: 3, 7: 4 },
+			'D': { 1: 8, 2: 7, 3: 5, 4: 3, 5: 1, 6: 1, 7: 2 },
+		};
+
+		for (let curSpot = 1; curSpot <= numSpots; curSpot++) {
+			for (let curHallway = 1; curHallway <= 7; curHallway++) {
+				if (!distanceFromHallwayToOutsideRoom[amphipod] || !distanceFromHallwayToOutsideRoom[amphipod][curHallway]) {
+					throw 'invalid distance';
+				}
+				const cost = distanceFromHallwayToOutsideRoom[amphipod][curHallway] + curSpot;
+				this.dag.addLink(`H${curHallway}`, `R${amphipod}${curSpot}`, true, cost);
+			}
+		}
 	}
 
 	private organiseDijkstra(): number {
@@ -299,21 +312,14 @@ class Day23Solver extends Solver {
 
 		// When moving from room to hallway
 		if (fromNodeKey.charAt(0) === 'R') {
-			// Can't move if already in the correct room and not blocking any other amphipods
-			const inCorrectRoom = fromNodeKey.charAt(1) === amphipod;
-			const atFrontEnd = fromNodeKey.charAt(2) === '1';
-			const atBackEnd = fromNodeKey.charAt(2) === '2';
-			const backEndIsTaken = !!values[`R${amphipod}2`];
-			const backEndIsTakenByCorrectAmphipod = values[`R${amphipod}2`] === amphipod;
-			if (inCorrectRoom && atBackEnd) {
-				return null;
-			}
-			if (inCorrectRoom && atFrontEnd && backEndIsTaken && backEndIsTakenByCorrectAmphipod) {
+			// Can't move through any other amphipods
+			if (!this.isPathClear(fromNodeKey, toNodeKey, values)) {
 				return null;
 			}
 
-			// Can't move through any other amphipods
-			if (!this.isPathClear(fromNodeKey, toNodeKey, values)) {
+			// Can't move if already in the correct room and not blocking any other amphipods
+			const inCorrectRoom = fromNodeKey.charAt(1) === amphipod;
+			if (inCorrectRoom && !this.isBlockingOtherAmphipod(amphipod, fromNodeKey, values)) {
 				return null;
 			}
 		}
@@ -349,21 +355,72 @@ class Day23Solver extends Solver {
 		}
 	}
 
-	private isPathClear(fromNodeKey: string, toNodeKey: string, values: {[node: string]: string}): boolean {
-		// If from or two the back end of a room, the front end must be clear
-		if (fromNodeKey.charAt(0) === 'R' && fromNodeKey.charAt(2) === '2') {
-			const frontEndSpot = `R${fromNodeKey.charAt(1)}1`;
-			if (values[frontEndSpot]) {
-				return false;
+	private isBlockingOtherAmphipod(amphipod: string, curNodeKey: string, values: { [key: string]: string }): boolean {
+		/*
+		if (curNodeKey.charAt(0) !== 'R' || curNodeKey.charAt(1) !== amphipod) {
+			throw 'invalid argument';
+		}
+
+		// works for a maximum of 4 spots
+		const curSpot = parseInt(curNodeKey.charAt(2));
+
+		for (let spotToCheck = curSpot + 1; spotToCheck <= 4; spotToCheck++) {
+			const key = `R${amphipod}${spotToCheck}`;
+			if (values[key] !== amphipod) {
+				return true;
 			}
 		}
-		if (toNodeKey.charAt(0) === 'R' && toNodeKey.charAt(2) === '2') {
-			const frontEndSpot = `R${fromNodeKey.charAt(1)}1`;
-			if (values[frontEndSpot]) {
+		return false;
+		*/
+
+		// todo fix for more than 2 rooms
+		const atFrontEnd = curNodeKey.charAt(2) === '1';
+		const atBackEnd = curNodeKey.charAt(2) === '2';
+		const backEndIsTaken = !!values[`R${amphipod}2`];
+		const backEndIsTakenByCorrectAmphipod = values[`R${amphipod}2`] === amphipod;
+		if (atBackEnd) {
+			return false;
+		}
+		if (atFrontEnd && backEndIsTaken && backEndIsTakenByCorrectAmphipod) {
+			return false;
+		}
+		return true;
+	}
+
+	private isPathClear(fromNodeKey: string, toNodeKey: string, values: {[node: string]: string}): boolean {
+		if (!this.isPathThroughRoomIsClear(toNodeKey, values)) {
+			return false;
+		}
+
+		if (!this.isPathThroughHallwayClear(fromNodeKey, toNodeKey, values)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private isPathThroughRoomIsClear(toNodeKey: string, values: {[node: string]: string}): boolean {
+		if (toNodeKey.charAt(0) !== 'R') {
+			return true;
+		}
+
+		const targetSpot = parseInt(toNodeKey.charAt(2));
+		if (isNaN(targetSpot)) {
+			throw 'invalid arguments';
+		}
+
+		const amphipod = toNodeKey.charAt(1);
+
+		for (let curSpot = 1; curSpot < targetSpot; curSpot++) {
+			if (values[`R${amphipod}${curSpot}`]) {
 				return false;
 			}
 		}
 
+		return true;
+	}
+
+	private isPathThroughHallwayClear(fromNodeKey: string, toNodeKey: string, values: {[node: string]: string}): boolean {
 		// Hallway spaces between the two nodes must be clear (assume from hallway to room or vice-versa otherwise it's
 		// an invalid move)
 		const hallwayNum = fromNodeKey.charAt(0) === 'H' ? fromNodeKey.charAt(1) : toNodeKey.charAt(1);
