@@ -12,6 +12,10 @@ class Day23Solver extends Solver {
 	private solvedValues: {[node: string]: string} = {};
 	private energyPerStep: Map<string, number> = new Map();
 
+	// Part 2 wouldn't work if I had each room split into 4 spots, so try again with 1 room that has a string representing all spots
+	private numSpotsPerRoom = 2;
+	private useMultiSpotRooms = true;
+
 	public init(inputFile: string): void {
 		this.input = InputParser.readLines(inputFile);
 
@@ -41,91 +45,155 @@ class Day23Solver extends Solver {
 	}
 
 	protected solvePart1(): string {
-		this.addRoomLinks('A', 2);
-		this.addRoomLinks('B', 2);
-		this.addRoomLinks('C', 2);
-		this.addRoomLinks('D', 2);
+		this.numSpotsPerRoom = 2;
 
-		// input is trimmed, so front part of room index will be different to back part of room index
-		this.initialValues = {
-			'RA1': this.input[2].charAt(3),
-			'RA2': this.input[3].charAt(1),
-			'RB1': this.input[2].charAt(5),
-			'RB2': this.input[3].charAt(3),
-			'RC1': this.input[2].charAt(7),
-			'RC2': this.input[3].charAt(5),
-			'RD1': this.input[2].charAt(9),
-			'RD2': this.input[3].charAt(7),
-		};
+		if (!this.useMultiSpotRooms) {
+			// works fine but checking if it's faster with multi-spot rooms
+			// sample solution = 470 sec, ~357k attempts
+			// full solution = 490 sec, ~400k attempts (solution=15516)
+			this.addRoomLinks('A', 2);
+			this.addRoomLinks('B', 2);
+			this.addRoomLinks('C', 2);
+			this.addRoomLinks('D', 2);
 
-		this.solvedValues = {
-			'RA1': 'A',
-			'RA2': 'A',
-			'RB1': 'B',
-			'RB2': 'B',
-			'RC1': 'C',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'D',
-		};
+			// input is trimmed, so front part of room index will be different to back part of room index
+			this.initialValues = {
+				'RA1': this.input[2].charAt(3),
+				'RA2': this.input[3].charAt(1),
+				'RB1': this.input[2].charAt(5),
+				'RB2': this.input[3].charAt(3),
+				'RC1': this.input[2].charAt(7),
+				'RC2': this.input[3].charAt(5),
+				'RD1': this.input[2].charAt(9),
+				'RD2': this.input[3].charAt(7),
+			};
 
-		this.sampleLog(this.dag.toString());
+			this.solvedValues = {
+				'RA1': 'A',
+				'RA2': 'A',
+				'RB1': 'B',
+				'RB2': 'B',
+				'RC1': 'C',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'D',
+			};
 
-		// let result = this.recursivelyOrganise(this.initialValues, 0, new Set(), Number.MAX_SAFE_INTEGER);
-		const result = this.organiseDijkstra();
-		return `${result}`;
+			this.sampleLog(this.dag.toString());
+
+			// let result = this.recursivelyOrganise(this.initialValues, 0, new Set(), Number.MAX_SAFE_INTEGER);
+			const result = this.organiseDijkstra();
+			return `${result}`;
+		} else {
+			// sample solution = 14 sec, ~18k attempts
+			// full solution = 6 sec, ~85k attempts (solution=15516)
+
+			this.addRoomLinks('A', 1);
+			this.addRoomLinks('B', 1);
+			this.addRoomLinks('C', 1);
+			this.addRoomLinks('D', 1);
+
+			// input is trimmed, so front part of room index will be different to back part of room index
+			this.initialValues = {
+				'RA1': `${this.input[2].charAt(3)}${this.input[3].charAt(1)}`,
+				'RB1': `${this.input[2].charAt(5)}${this.input[3].charAt(3)}`,
+				'RC1': `${this.input[2].charAt(7)}${this.input[3].charAt(5)}`,
+				'RD1': `${this.input[2].charAt(9)}${this.input[3].charAt(7)}`,
+			};
+
+			this.solvedValues = {
+				'RA1': 'AA',
+				'RB1': 'BB',
+				'RC1': 'CC',
+				'RD1': 'DD',
+			};
+
+			this.sampleLog(this.dag.toString());
+
+			const result = this.organiseDijkstra();
+			return `${result}`;
+		}
 	}
 
 	protected solvePart2(): string {
-		this.addRoomLinks('A', 4);
-		this.addRoomLinks('B', 4);
-		this.addRoomLinks('C', 4);
-		this.addRoomLinks('D', 4);
+		this.numSpotsPerRoom = 4;
 
-		// input is trimmed, so front part of room index will be different to back part of room index
-		this.initialValues = {
-			'RA1': this.input[2].charAt(3),
-			'RA2': 'D',
-			'RA3': 'D',
-			'RA4': this.input[3].charAt(1),
-			'RB1': this.input[2].charAt(5),
-			'RB2': 'C',
-			'RB3': 'B',
-			'RB4': this.input[3].charAt(3),
-			'RC1': this.input[2].charAt(7),
-			'RC2': 'B',
-			'RC3': 'A',
-			'RC4': this.input[3].charAt(5),
-			'RD1': this.input[2].charAt(9),
-			'RD2': 'A',
-			'RD3': 'C',
-			'RD4': this.input[3].charAt(7),
-		};
+		if (!this.useMultiSpotRooms) {
+			// Doesn't work
+			this.addRoomLinks('A', 4);
+			this.addRoomLinks('B', 4);
+			this.addRoomLinks('C', 4);
+			this.addRoomLinks('D', 4);
 
-		this.solvedValues = {
-			'RA1': 'A',
-			'RA2': 'A',
-			'RA3': 'A',
-			'RA4': 'A',
-			'RB1': 'B',
-			'RB2': 'B',
-			'RB3': 'B',
-			'RB4': 'B',
-			'RC1': 'C',
-			'RC2': 'C',
-			'RC3': 'C',
-			'RC4': 'C',
-			'RD1': 'D',
-			'RD2': 'D',
-			'RD3': 'D',
-			'RD4': 'D',
-		};
+			// input is trimmed, so front part of room index will be different to back part of room index
+			this.initialValues = {
+				'RA1': this.input[2].charAt(3),
+				'RA2': 'D',
+				'RA3': 'D',
+				'RA4': this.input[3].charAt(1),
+				'RB1': this.input[2].charAt(5),
+				'RB2': 'C',
+				'RB3': 'B',
+				'RB4': this.input[3].charAt(3),
+				'RC1': this.input[2].charAt(7),
+				'RC2': 'B',
+				'RC3': 'A',
+				'RC4': this.input[3].charAt(5),
+				'RD1': this.input[2].charAt(9),
+				'RD2': 'A',
+				'RD3': 'C',
+				'RD4': this.input[3].charAt(7),
+			};
 
-		this.sampleLog(this.dag.toString());
+			this.solvedValues = {
+				'RA1': 'A',
+				'RA2': 'A',
+				'RA3': 'A',
+				'RA4': 'A',
+				'RB1': 'B',
+				'RB2': 'B',
+				'RB3': 'B',
+				'RB4': 'B',
+				'RC1': 'C',
+				'RC2': 'C',
+				'RC3': 'C',
+				'RC4': 'C',
+				'RD1': 'D',
+				'RD2': 'D',
+				'RD3': 'D',
+				'RD4': 'D',
+			};
 
-		const result = 'todo';
-		//const result = this.organiseDijkstra();
-		return `${result}`;
+			this.sampleLog(this.dag.toString());
+
+			const result = this.organiseDijkstra();
+			return `${result}`;
+		} else {
+			this.addRoomLinks('A', 1);
+			this.addRoomLinks('B', 1);
+			this.addRoomLinks('C', 1);
+			this.addRoomLinks('D', 1);
+
+			// input is trimmed, so front part of room index will be different to back part of room index
+			this.initialValues = {
+				'RA1': `${this.input[2].charAt(3)}DD${this.input[3].charAt(1)}`,
+				'RB1': `${this.input[2].charAt(5)}CB${this.input[3].charAt(3)}`,
+				'RC1': `${this.input[2].charAt(7)}BA${this.input[3].charAt(5)}`,
+				'RD1': `${this.input[2].charAt(9)}AC${this.input[3].charAt(7)}`,
+			};
+
+			this.solvedValues = {
+				'RA1': 'AAAA',
+				'RB1': 'BBBB',
+				'RC1': 'CCCC',
+				'RD1': 'DDDD',
+			};
+
+			this.sampleLog(this.dag.toString());
+
+			const result = this.organiseDijkstra();
+			return `${result}`;
+		}
 	}
 
 	private addRoomLinks(amphipod: string, numSpots: number): void {
@@ -165,13 +233,17 @@ class Day23Solver extends Solver {
 
 		const visitedSet: Set<string> = new Set();
 
-		let current = this.initialValues;
-		let currentStr = this.configurationToString(current);
+		let currentStr = this.configurationToString(this.initialValues);
 
 		// set progress to some large number just so we can see how quickly it is considering options
-		this.initProgress(100000);
+		this.initProgress(1000000);
+		let currentAttempt = 0;
 
 		for (;;) {
+			if (currentAttempt % 1000 === 0) {
+				this.sampleLog(`Attempt #${currentAttempt}`);
+			}
+
 			const currentCost = distances.get(currentStr);
 			if (currentCost === undefined) {
 				throw 'invalid configuration';
@@ -183,61 +255,123 @@ class Day23Solver extends Solver {
 				return currentCost;
 			}
 
-			// From the current configuration, find all valid moves for all amphipods
+
+			const moveConfig3 = this.configurationToString({
+				'RA1': 'BA',
+				'RB1': 'D',
+				'RC1': 'C',
+				'RD1': 'DA',
+				'H3': 'B',
+				'H4': 'C',
+			});
+			if (currentStr === moveConfig3) {
+				this.sampleLog('temp debug');
+			}
+
+			const current = this.stringToConfiguration(currentStr);
+			const possibleMoves = this.calculatePossibleMoves(current);
+
+			// From the current configuration, go through all valid moves for all amphipods
 			for (const nodeKey of Object.keys(current)) {
-				const nodeVal: string = current[nodeKey];
+				const nodeVal: string = current[nodeKey].charAt(0);
 				const node = this.dag.getNode(nodeKey);
-				if (!node) {
+				const moves = possibleMoves.get(nodeKey);
+				if (!node || !moves) {
 					continue;
 				}
 
-				for (const targetKey of node.forwardLinks.keys()) {
-					const moveLink = node.forwardLinks.get(targetKey);
-					if (!moveLink) {
-						throw 'invalid link';
+				moves.forEach((moveCost, targetKey) => {
+					this.debugMove(nodeVal, nodeKey, targetKey, current, moveCost);
+
+					if (moveCost !== null) {
+						// For each valid move, check to see if it's the best way to get to that configuration
+						const costAfterMove = currentCost + moveCost;
+
+						const newConfigString = this.makeMove(currentStr, nodeVal, nodeKey, targetKey);
+
+						if (!visitedSet.has(newConfigString)) {
+							const existingCost = distances.get(newConfigString);
+
+							// If it is, update the cost and add to unvisited set if it's a new configuration
+							if (existingCost === undefined || costAfterMove < existingCost) {
+								distances.set(newConfigString, costAfterMove);
+								unvisitedSet.add(newConfigString, costAfterMove);
+							}
+						}
 					}
-
-					const moveCost = this.moveCost(nodeVal, nodeKey, targetKey, current, moveLink.cost);
-
-					this.debugMove(nodeVal, nodeKey, targetKey, current, moveLink.cost, moveCost);
-
-					if (moveCost === null) {
-						continue;
-					}
-
-					// For each valid move, check to see if it's the best way to get to that configuration
-					const costAfterMove = currentCost + moveCost;
-
-					const newConfiguration = this.stringToConfiguration(currentStr);
-					delete newConfiguration[nodeKey];
-					newConfiguration[targetKey] = nodeVal;
-					const newConfigString = this.configurationToString(newConfiguration);
-
-					if (visitedSet.has(newConfigString)) {
-						continue;
-					}
-
-					const existingCost = distances.get(newConfigString);
-
-					// If it is, update the cost and add to unvisited set if it's a new configuration
-					if (existingCost === undefined || costAfterMove < existingCost) {
-						distances.set(newConfigString, costAfterMove);
-						unvisitedSet.add(newConfigString, costAfterMove);
-					}
-				}
+				});
 			}
 
 			// We've exhausted all options from the current configuration, so remove from unvisited set and find the
 			// cheapest configuration out of the unvisited set
 			unvisitedSet.rem(currentStr);
 			visitedSet.add(currentStr);
+			distances.delete(currentStr);
 			currentStr = unvisitedSet.range(0, 0)[0];
 			if (!currentStr) {
 				throw 'invalid unvisited';
 			}
-			current = this.stringToConfiguration(currentStr);
 			this.incrementProgress();
+			currentAttempt++;
 		}
+	}
+
+	private calculatePossibleMoves(values: {[node: string]: string}): Map<string, Map<string, number>> {
+		const moves: Map<string, Map<string, number>> = new Map();
+
+		// From the starting configuration, find all valid moves for the location of all amphipods
+		for (const nodeKey of Object.keys(values)) {
+			const spotMoves: Map<string, number> = new Map();
+
+			const nodeVal: string = values[nodeKey].charAt(0);
+			const node = this.dag.getNode(nodeKey);
+			if (!node) {
+				continue;
+			}
+
+			let hasMoves = false;
+			for (const targetKey of node.forwardLinks.keys()) {
+				const moveLink = node.forwardLinks.get(targetKey);
+				if (!moveLink) {
+					throw 'invalid link';
+				}
+
+				const moveCost = this.moveCost(nodeVal, nodeKey, targetKey, values, moveLink.cost);
+				if (moveCost !== null) {
+					spotMoves.set(targetKey, moveCost);
+					hasMoves = true;
+				}
+			}
+
+			if (hasMoves) {
+				moves.set(nodeKey, spotMoves);
+			}
+		}
+
+		return moves;
+	}
+
+	private makeMove(currentValuesStr: string, amphipod: string, fromNodeKey: string, toNodeKey: string): string {
+		const newConfiguration = this.stringToConfiguration(currentValuesStr);
+
+		if (!this.useMultiSpotRooms) {
+			delete newConfiguration[fromNodeKey];
+			newConfiguration[toNodeKey] = amphipod;
+		} else {
+			if (fromNodeKey.charAt(0) === 'R') {
+				newConfiguration[fromNodeKey] = newConfiguration[fromNodeKey].substring(1);
+			} else {
+				delete newConfiguration[fromNodeKey];
+			}
+
+			if (toNodeKey.charAt(0) === 'R') {
+				newConfiguration[toNodeKey] = `${amphipod}${newConfiguration[toNodeKey]}`;
+			} else {
+				newConfiguration[toNodeKey] = amphipod;
+			}
+		}
+
+		return this.configurationToString(newConfiguration);
 	}
 
 	/* Didn't work (maybe just because the JSON conversion wasn't sorting by key?)
@@ -300,18 +434,34 @@ class Day23Solver extends Solver {
 	*/
 
 	private moveCost(amphipod: string, fromNodeKey: string, toNodeKey: string, values: {[node: string]: string}, numSteps: number): number | null {
+		const fromNodeType = fromNodeKey.charAt(0);
+		const toNodeType = toNodeKey.charAt(0);
+
 		// Can never move from hallway to hallway or from room to room
-		if (fromNodeKey.charAt(0) === toNodeKey.charAt(0)) {
+		if (fromNodeType === toNodeType) {
 			return null;
 		}
 
+		const toNodeVal = values[toNodeKey];
 		// Can never move into a spot that is already taken
-		if (values[toNodeKey]) {
-			return null;
+		if (!this.useMultiSpotRooms) {
+			if (toNodeVal) {
+				return null;
+			}
+		} else {
+			if (toNodeType === 'H') {
+				if (toNodeVal) {
+					return null;
+				}
+			} else {
+				if (toNodeVal && toNodeVal.length >= 4) {
+					return null;
+				}
+			}
 		}
 
 		// When moving from room to hallway
-		if (fromNodeKey.charAt(0) === 'R') {
+		if (fromNodeType === 'R') {
 			// Can't move through any other amphipods
 			if (!this.isPathClear(fromNodeKey, toNodeKey, values)) {
 				return null;
@@ -335,14 +485,37 @@ class Day23Solver extends Solver {
 				return null;
 			}
 
-			// Must move into the furthest spot in the room
-			if (toNodeKey.charAt(2) === '1' && !values[`R${amphipod}2`]) {
-				return null;
+			if (!this.useMultiSpotRooms) {
+				// Must move into the furthest spot in the room
+				if (toNodeKey.charAt(2) === '1' && !values[`R${amphipod}2`]) {
+					return null;
+				}
 			}
 
 			// Can't move into room if the wrong amphipod is already in the room
-			if (toNodeKey.charAt(2) === '1' && !!values[`R${amphipod}2`] && values[`R${amphipod}2`] !== amphipod) {
-				return null;
+			if (!this.useMultiSpotRooms) {
+				if (toNodeKey.charAt(2) === '1' && !!values[`R${amphipod}2`] && values[`R${amphipod}2`] !== amphipod) {
+					return null;
+				}
+			} else {
+				if (this.roomContainsOtherAmphipod(amphipod, toNodeVal)) {
+					return null;
+				}
+			}
+		}
+
+		let extraSteps = 0;
+		if (this.useMultiSpotRooms) {
+			// Need to calculate extra steps required to move into or out of correct spot in room
+			const movingIn = fromNodeKey.charAt(0) === 'H';
+			const roomKey = movingIn ? toNodeKey : fromNodeKey;
+			const numSpotsTaken = (values[roomKey] || '').length;
+			if (movingIn) {
+				// Moving in - no extra steps if it's already full except for 1 spot
+				extraSteps = this.numSpotsPerRoom - numSpotsTaken - 1;
+			} else {
+				// Moving out - one extra step for each free spot
+				extraSteps = this.numSpotsPerRoom - numSpotsTaken;
 			}
 		}
 
@@ -351,40 +524,41 @@ class Day23Solver extends Solver {
 		if (!energyPerStep) {
 			return null;
 		} else {
-			return numSteps * energyPerStep;
+			return (numSteps + extraSteps) * energyPerStep;
 		}
 	}
 
 	private isBlockingOtherAmphipod(amphipod: string, curNodeKey: string, values: { [key: string]: string }): boolean {
-		/*
 		if (curNodeKey.charAt(0) !== 'R' || curNodeKey.charAt(1) !== amphipod) {
 			throw 'invalid argument';
 		}
 
+		// An amphipod is allowed to move from a room to a hallway only if there is an amphipod of the wrong type
+		// "behind" it in the room (so it's getting out of the way for that one to move)
+
 		// works for a maximum of 4 spots
-		const curSpot = parseInt(curNodeKey.charAt(2));
+		if (!this.useMultiSpotRooms) {
+			const curSpot = parseInt(curNodeKey.charAt(2));
 
-		for (let spotToCheck = curSpot + 1; spotToCheck <= 4; spotToCheck++) {
-			const key = `R${amphipod}${spotToCheck}`;
-			if (values[key] !== amphipod) {
-				return true;
+			for (let spotToCheck = curSpot + 1; spotToCheck <= 4; spotToCheck++) {
+				const key = `R${amphipod}${spotToCheck}`;
+				if (values[key] !== amphipod) {
+					return true;
+				}
 			}
+			return false;
+		} else {
+			// we can assume that the amphipod we're moving is at the front of the room, otherwise we wouldn't be
+			// checking this move. So we can just check to see if there are any amphiods other than the correct type in
+			// this room.
+			const roomContents = values[`R${amphipod}1`];
+			return this.roomContainsOtherAmphipod(amphipod, roomContents);
 		}
-		return false;
-		*/
+	}
 
-		// todo fix for more than 2 rooms
-		const atFrontEnd = curNodeKey.charAt(2) === '1';
-		const atBackEnd = curNodeKey.charAt(2) === '2';
-		const backEndIsTaken = !!values[`R${amphipod}2`];
-		const backEndIsTakenByCorrectAmphipod = values[`R${amphipod}2`] === amphipod;
-		if (atBackEnd) {
-			return false;
-		}
-		if (atFrontEnd && backEndIsTaken && backEndIsTakenByCorrectAmphipod) {
-			return false;
-		}
-		return true;
+	private roomContainsOtherAmphipod(targetAmphipod: string, roomContents: string): boolean {
+		// could be sped up/precomputed/regex'd
+		return roomContents.split('').some(ch => ch !== targetAmphipod);
 	}
 
 	private isPathClear(fromNodeKey: string, toNodeKey: string, values: {[node: string]: string}): boolean {
@@ -401,6 +575,10 @@ class Day23Solver extends Solver {
 
 	private isPathThroughRoomIsClear(toNodeKey: string, values: {[node: string]: string}): boolean {
 		if (toNodeKey.charAt(0) !== 'R') {
+			return true;
+		}
+
+		if (this.useMultiSpotRooms) {
 			return true;
 		}
 
@@ -499,197 +677,300 @@ class Day23Solver extends Solver {
 		}
 	}
 
-	private debugMove(amphipod: string, startNode: string, endNode: string, configuration: { [key: string]: string }, linkCost: number, moveCost: number | null): void {
+	// works for part 1 only
+	private debugMove(amphipod: string, startNode: string, endNode: string, configuration: { [key: string]: string }, moveCost: number | null): void {
 		const logStr =`Moving ${amphipod} from ${startNode} to ${endNode}, move cost=${moveCost}, config=${this.configurationToString(configuration)}`;
 
 		const currentConfigStr = this.configurationToString(configuration);
 
-		const moveConfig1 = this.configurationToString({
-			'RA1': 'B',
-			'RA2': 'A',
-			'RB1': 'C',
-			'RB2': 'D',
-			'RC1': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig1 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RA1': 'B',
+				'RA2': 'A',
+				'RB1': 'C',
+				'RB2': 'D',
+				'RC1': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'BA',
+				'RB1': 'CD',
+				'RC1': 'BC',
+				'RD1': 'DA',
+			});
 		if (currentConfigStr === moveConfig1) {
 			if (amphipod === 'B' && startNode === 'RC1' && endNode === 'H3') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig2 = this.configurationToString({
-			'RA1': 'B',
-			'RA2': 'A',
-			'RB1': 'C',
-			'RB2': 'D',
-			'H3': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig2 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RA1': 'B',
+				'RA2': 'A',
+				'RB1': 'C',
+				'RB2': 'D',
+				'H3': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'BA',
+				'RB1': 'CD',
+				'RC1': 'C',
+				'RD1': 'DA',
+				'H3': 'B',
+			});
 		if (currentConfigStr === moveConfig2) {
 			if (amphipod === 'C' && startNode === 'RB1' && endNode === 'H4') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig3 = this.configurationToString({
-			'RA1': 'B',
-			'RA2': 'A',
-			'H4': 'C',
-			'RB2': 'D',
-			'H3': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig3 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RA1': 'B',
+				'RA2': 'A',
+				'H4': 'C',
+				'RB2': 'D',
+				'H3': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'BA',
+				'RB1': 'D',
+				'RC1': 'C',
+				'RD1': 'DA',
+				'H3': 'B',
+				'H4': 'C',
+			});
 		if (currentConfigStr === moveConfig3) {
 			if (amphipod === 'C' && startNode === 'H4' && endNode === 'RC1') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig4 = this.configurationToString({
-			'RA1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'RB2': 'D',
-			'H3': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig4 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RA1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'RB2': 'D',
+				'H3': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'BA',
+				'RB1': 'D',
+				'RC1': 'CC',
+				'RD1': 'DA',
+				'H3': 'B',
+			});
 		if (currentConfigStr === moveConfig4) {
-			if (amphipod === 'D' && startNode === 'RB2' && endNode === 'H4') {
+			if (amphipod === 'D' && startNode === (!this.useMultiSpotRooms ? 'RB2' : 'RB1') && endNode === 'H4') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig5 = this.configurationToString({
-			'RA1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'H4': 'D',
-			'H3': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig5 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RA1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'H4': 'D',
+				'H3': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'BA',
+				'RB1': '',
+				'RC1': 'CC',
+				'RD1': 'DA',
+				'H3': 'B',
+				'H4': 'D',
+			});
 		if (currentConfigStr === moveConfig5) {
-			if (amphipod === 'B' && startNode === 'H3' && endNode === 'RB2') {
+			if (amphipod === 'B' && startNode === 'H3' && endNode === (!this.useMultiSpotRooms ? 'RB2' : 'RB1')) {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig6 = this.configurationToString({
-			'RA1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'H4': 'D',
-			'RB2': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig6 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RA1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'H4': 'D',
+				'RB2': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'BA',
+				'RB1': 'B',
+				'RC1': 'CC',
+				'RD1': 'DA',
+				'H4': 'D',
+			});
 		if (currentConfigStr === moveConfig6) {
 			if (amphipod === 'B' && startNode === 'RA1' && endNode === 'H3') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig7 = this.configurationToString({
-			'H3': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'H4': 'D',
-			'RB2': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig7 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'H3': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'H4': 'D',
+				'RB2': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'A',
+				'RB1': 'B',
+				'RC1': 'CC',
+				'RD1': 'DA',
+				'H4': 'D',
+				'H3': 'B',
+			});
 		if (currentConfigStr === moveConfig7) {
 			if (amphipod === 'B' && startNode === 'H3' && endNode === 'RB1') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig8 = this.configurationToString({
-			'RB1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'H4': 'D',
-			'RB2': 'B',
-			'RC2': 'C',
-			'RD1': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig8 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RB1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'H4': 'D',
+				'RB2': 'B',
+				'RC2': 'C',
+				'RD1': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'A',
+				'RB1': 'BB',
+				'RC1': 'CC',
+				'RD1': 'DA',
+				'H4': 'D',
+			});
 		if (currentConfigStr === moveConfig8) {
 			if (amphipod === 'D' && startNode === 'RD1' && endNode === 'H5') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig9 = this.configurationToString({
-			'RB1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'H4': 'D',
-			'RB2': 'B',
-			'RC2': 'C',
-			'H5': 'D',
-			'RD2': 'A',
-		});
+		const moveConfig9 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RB1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'H4': 'D',
+				'RB2': 'B',
+				'RC2': 'C',
+				'H5': 'D',
+				'RD2': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'A',
+				'RB1': 'BB',
+				'RC1': 'CC',
+				'RD1': 'A',
+				'H4': 'D',
+				'H5': 'D',
+			});
 		if (currentConfigStr === moveConfig9) {
-			if (amphipod === 'A' && startNode === 'RD2' && endNode === 'H6') {
+			if (amphipod === 'A' && startNode === (!this.useMultiSpotRooms ? 'RD2' : 'RD1') && endNode === 'H6') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig10 = this.configurationToString({
-			'RB1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'H4': 'D',
-			'RB2': 'B',
-			'RC2': 'C',
-			'H5': 'D',
-			'H6': 'A',
-		});
+		const moveConfig10 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RB1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'H4': 'D',
+				'RB2': 'B',
+				'RC2': 'C',
+				'H5': 'D',
+				'H6': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'A',
+				'RB1': 'BB',
+				'RC1': 'CC',
+				'RD1': '',
+				'H4': 'D',
+				'H5': 'D',
+				'H6': 'A',
+			});
 		if (currentConfigStr === moveConfig10) {
-			if (amphipod === 'D' && startNode === 'H5' && endNode === 'RD2') {
+			if (amphipod === 'D' && startNode === 'H5' && endNode === (!this.useMultiSpotRooms ? 'RD2' : 'RD1')) {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig11 = this.configurationToString({
-			'RB1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'H4': 'D',
-			'RB2': 'B',
-			'RC2': 'C',
-			'RD2': 'D',
-			'H6': 'A',
-		});
+		const moveConfig11 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RB1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'H4': 'D',
+				'RB2': 'B',
+				'RC2': 'C',
+				'RD2': 'D',
+				'H6': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'A',
+				'RB1': 'BB',
+				'RC1': 'CC',
+				'RD1': 'D',
+				'H4': 'D',
+				'H6': 'A',
+			});
 		if (currentConfigStr === moveConfig11) {
 			if (amphipod === 'D' && startNode === 'H4' && endNode === 'RD1') {
 				this.sampleLog(logStr);
 			}
 		}
 
-		const moveConfig12 = this.configurationToString({
-			'RB1': 'B',
-			'RA2': 'A',
-			'RC1': 'C',
-			'RD1': 'D',
-			'RB2': 'B',
-			'RC2': 'C',
-			'RD2': 'D',
-			'H6': 'A',
-		});
+		const moveConfig12 = !this.useMultiSpotRooms
+			? this.configurationToString({
+				'RB1': 'B',
+				'RA2': 'A',
+				'RC1': 'C',
+				'RD1': 'D',
+				'RB2': 'B',
+				'RC2': 'C',
+				'RD2': 'D',
+				'H6': 'A',
+			})
+			: this.configurationToString({
+				'RA1': 'A',
+				'RB1': 'BB',
+				'RC1': 'CC',
+				'RD1': 'DD',
+				'H6': 'A',
+			});
 		if (currentConfigStr === moveConfig12) {
 			if (amphipod === 'A' && startNode === 'H6' && endNode === 'RA1') {
 				this.sampleLog(logStr);
