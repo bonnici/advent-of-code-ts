@@ -1,2 +1,14 @@
+inp w
 inp x
-mul x -1
+inp y
+inp w
+inp x
+inp y
+inp w
+inp x
+inp y
+inp w
+inp x
+inp y
+inp w
+inp x
