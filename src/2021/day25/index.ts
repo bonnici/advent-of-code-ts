@@ -1,7 +1,7 @@
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
-import GenericGrid from "../../common/GenericGrid";
-import Coord from "../../common/Coord";
+import GenericGrid from '../../common/GenericGrid';
+import Coord from '../../common/Coord';
 
 class Day25Solver extends Solver {
 	private gridInput: Array<string> = [];
@@ -11,7 +11,7 @@ class Day25Solver extends Solver {
 	}
 
 	protected solvePart1(): string {
-		let grid = GenericGrid.buildFromStringList(this.gridInput);
+		const grid = GenericGrid.buildFromStringList(this.gridInput);
 		this.sampleLog(grid.toString());
 
 		const numSteps = this.runUntilStill(grid);

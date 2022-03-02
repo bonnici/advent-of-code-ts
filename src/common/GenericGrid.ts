@@ -105,7 +105,7 @@ export default class GenericGrid<Type> {
 		}
 	}
 
-	public inBounds(c: Coord) {
+	public inBounds(c: Coord): boolean {
 		return c.x >= 0 && c.x < this.width && c.y >= 0 && c.y < this.height;
 	}
 
