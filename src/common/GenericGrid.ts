@@ -37,6 +37,27 @@ export default class GenericGrid<Type> {
 		);
 	}
 
+	public static buildFromStringList(input: Array<string>): GenericGrid<string> {
+		const gridWidth = input[0].length ;
+		const gridHeight = input.length;
+
+		const grid = new GenericGrid<string>(
+			gridWidth,
+			gridHeight,
+			() => '.',
+			(a, b) => a.localeCompare(b),
+			s => s,
+		);
+		for (let i = 0; i < input.length; i++) {
+			const line = input[i];
+			for (let j = 0; j < line.length; j++) {
+				grid.set(j, i, line[j]);
+			}
+		}
+
+		return grid;
+	}
+
 	public get elements(): Array<Type> {
 		return this.elems;
 	}
@@ -84,6 +105,10 @@ export default class GenericGrid<Type> {
 		}
 	}
 
+	public inBounds(c: Coord) {
+		return c.x >= 0 && c.x < this.width && c.y >= 0 && c.y < this.height;
+	}
+
 	public toString(): string {
 		const renderFn = this.renderFn; // Needed to appease TypeScript
 
@@ -105,9 +130,5 @@ export default class GenericGrid<Type> {
 
 	private indexC(c: Coord) {
 		return (c.y * this.width) + c.x;
-	}
-
-	private inBounds(c: Coord) {
-		return c.x >= 0 && c.x < this.width && c.y >= 0 && c.y < this.height;
 	}
 }
