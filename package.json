@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "cli-progress": "^3.9.0",
+    "cli-progress": "^3.11.2",
     "handlebars": "^4.7.7",
     "inquirer": "^8.1.2",
     "redis-sorted-set": "^2.0.0"
