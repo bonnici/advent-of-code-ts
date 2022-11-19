@@ -1,9 +1,7 @@
+import RedisSortedSet from 'redis-sorted-set';
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
 import GenericDag from '../../common/GenericDag';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const RedisSortedSet = require('redis-sorted-set');
 
 class Day23Solver extends Solver {
 	private input: Array<string> = [];

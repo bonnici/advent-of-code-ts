@@ -7,7 +7,8 @@ The solutions include:
 * Some from [2020](https://adventofcode.com/2020) copied over from
  [advent-of-code-2020](https://github.com/bonnici/advent-of-code-2020) to help create the framework
 * Some from [2018](https://adventofcode.com/2018), written to practice using the framework
-* In-progress solutions from [2021](https://adventofcode.com/2021)
+* Full solutions from [2021](https://adventofcode.com/2021)
+* In-progress solutions from [2022](https://adventofcode.com/2022)
 * Note that [2019](https://adventofcode.com/2019) solutions are not included but what I got up to can be found at 
  [advent-of-code-2019](https://github.com/bonnici/advent-of-code-2019)
 
@@ -18,7 +19,7 @@ year and day other than the latest day available in code, e.g. `yarn cli 2018` w
 another day's solution.
 
 To run a single solution without using the CLI, use a command like:
-`cross-env npx ts-node src/day4/index.ts 2020/day4/input.txt 2 expected.txt`
+`npx cross-env ts-node --files src/day4/index.ts 2020/day4/input.txt 2 expected.txt`
 The first parameter is the input file, the second parameter is the part to run (1 or 2), and the 3rd optional parameter 
 is a file containing the expected result (useful for the sample inputs/outputs in puzzle descriptions). Logging via the
 `sampleLog` function will log out to console only when a sample solution is passed in.

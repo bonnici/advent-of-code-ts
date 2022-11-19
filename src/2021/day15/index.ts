@@ -1,10 +1,8 @@
+import RedisSortedSet from 'redis-sorted-set';
 import { Solver } from '../../common/Solver';
 import { InputParser}  from '../../common/InputParser';
 import GenericGrid from '../../common/GenericGrid';
 import Coord from '../../common/Coord';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const RedisSortedSet = require('redis-sorted-set');
 
 class Day15Solver extends Solver {
 	private inputFile = '';

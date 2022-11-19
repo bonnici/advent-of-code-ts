@@ -7,7 +7,7 @@
     "cli": "npx ts-node src/common/CliDriver.ts",
     "lint": "npx eslint **/*.ts",
     "check": "yarn run lint && yarn jest",
-    "day3Sample": "npx ts-node src/2020/day3/index.ts src/2020/day3/sample.txt 1 src/2020/day3/sample.p1.expected.txt",
+    "day3Sample": "npx ts-node --files src/2020/day3/index.ts src/2020/day3/sample.txt 1 src/2020/day3/sample.p1.expected.txt",
     "scaffoldDay5": "npx ts-node src/common/Scaffolder.ts 2020 5",
     "prepare": "husky install"
   },
