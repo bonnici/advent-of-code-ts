@@ -30,7 +30,7 @@
     "chalk": "^4.1.2",
     "cli-progress": "^3.11.2",
     "handlebars": "^4.7.7",
-    "inquirer": "^8.1.2",
+    "inquirer": "8.2.4",
     "redis-sorted-set": "^2.0.0"
   }
 }
