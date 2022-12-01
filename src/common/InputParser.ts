@@ -48,6 +48,16 @@ export class InputParser {
 		return groups;
 	}
 
+	public static readLinesInGroupsWithTransform<Type>(path: string, transform: (line: string) => Type): Type[][] {
+		const groupsStr = InputParser.readLinesInGroups(path);
+		const groups: Type[][] = [];
+		groupsStr.forEach((group) => {
+			groups.push(group.map(transform));
+		});
+
+		return groups;
+	}
+
 	public static readLinesAsNumberGrid(path: string): GenericGrid<number> {
 		const chars = InputParser.readLinesAsChars(path);
 		const grid = new GenericGrid<number>(
