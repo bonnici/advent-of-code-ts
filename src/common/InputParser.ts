@@ -6,11 +6,11 @@ export class InputParser {
 		return fs.readFileSync(path, 'utf8').trim();
 	}
 
-	public static readLines(path: string, shouldFilter = true): string[] {
+	public static readLines(path: string, shouldFilter = true, shouldTrim = true): string[] {
 		return fs
 			.readFileSync(path, 'utf8')
 			.split('\n')
-			.map((line: string) => line.trim())
+			.map((line: string) => shouldTrim ? line.trim() : line)
 			.filter(line => !shouldFilter || !!line);
 	}
 
@@ -30,13 +30,13 @@ export class InputParser {
 		return InputParser.readLines(path).map(line => transform(line));
 	}
 
-	public static readLinesInGroups(path: string): string[][] {
-		const lines = InputParser.readLines(path, false);
+	public static readLinesInGroups(path: string, shouldTrim = true): string[][] {
+		const lines = InputParser.readLines(path, false, shouldTrim);
 
 		const groups: string[][] = [];
 		let curGroup: string[] = [];
 		lines.forEach((line) => {
-			if ((line || '').trim() === '') {
+			if ((line.trim() || '').trim() === '') {
 				groups.push(curGroup);
 				curGroup = [];
 			} else {
