@@ -57,6 +57,27 @@ export default class GenericGrid<Type> {
 
 		return grid;
 	}
+	
+	public static buildIntsFromStringList(input: Array<string>): GenericGrid<number> {
+		const gridWidth = input[0].length ;
+		const gridHeight = input.length;
+
+		const grid = new GenericGrid<number>(
+			gridWidth,
+			gridHeight,
+			() => 0,
+			(a, b) => a - b,
+			n => `${n}`,
+		);
+		for (let i = 0; i < input.length; i++) {
+			const line = input[i];
+			for (let j = 0; j < line.length; j++) {
+				grid.set(j, i, parseInt(line[j]));
+			}
+		}
+
+		return grid;
+	}
 
 	public get elements(): Array<Type> {
 		return this.elems;

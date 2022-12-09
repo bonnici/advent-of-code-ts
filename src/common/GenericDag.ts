@@ -33,6 +33,10 @@ export default class GenericDag<KeyType> {
 		return this.nodes.size;
 	}
 
+	public keys(): Array<KeyType> {
+		return [...this.nodes.keys()];
+	}
+
 	public getNode(name: KeyType): GenericDagNode<KeyType> | null {
 		return this.nodes.get(name) || null;
 	}
@@ -86,6 +90,14 @@ export default class GenericDag<KeyType> {
 		let result = '';
 		for (const [key, value] of this.nodes) {
 			result += `${key}: ${value.allLinkNames()}\n`;
+		}
+		return result;
+	}
+
+	public toGraphStringVerbose(): string {
+		let result = '';
+		for (const [key, value] of this.nodes) {
+			result += `${key}: backlinks: ${[...value.backLinks.keys()].join(', ')}, forwardlinks: ${[...value.forwardLinks.keys()].join(', ')}\n`;
 		}
 		return result;
 	}
