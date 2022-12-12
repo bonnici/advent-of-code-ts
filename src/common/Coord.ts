@@ -25,6 +25,19 @@ export default class Coord {
 
 		return new Coord(x, y);
 	}
+	
+	public static clone(source: Coord): Coord {
+		return Coord.fromString(source.toString());
+	}
+	
+	// Interpreting "diff" as the amount other would need to move to be same as this
+	diff(other: Coord) {
+		return new Coord(other.x - this.x, other.y - this.y);
+	}
+	
+	isValidPosition(gridWidth: number, gridHeight: number) {
+		return this.x >= 0 && this.x < gridWidth && this.y >= 0 && this.y < gridHeight;
+	}
 
 	public toString(): string {
 		return `${this.x},${this.y}`;
