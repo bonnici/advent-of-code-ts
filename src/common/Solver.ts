@@ -99,9 +99,9 @@ export abstract class Solver {
 		}
 	}
 
-	protected incrementProgress(): void {
+	protected incrementProgress(step = 1): void {
 		if (!process.env.SAMPLE_FILE) {
-			this.progressBar.increment();
+			this.progressBar.increment(step);
 		}
 	}
 }

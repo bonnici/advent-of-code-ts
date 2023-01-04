@@ -11,7 +11,7 @@ export class GenericDagNode<KeyType> {
 	public backLinks: Map<KeyType, GenericDagLink<KeyType>>;
 	public forwardLinks: Map<KeyType, GenericDagLink<KeyType>>;
 
-	constructor(private readonly name: KeyType) {
+	constructor(readonly name: KeyType) {
 		this.backLinks = new Map();
 		this.forwardLinks = new Map();
 	}

@@ -37,6 +37,16 @@ export default class GenericGrid<Type> {
 		);
 	}
 
+	public static blankStringGrid(): GenericGrid<string> {
+		return new GenericGrid<string>(
+			1,
+			1,
+			() => '.',
+			(a, b) => a.localeCompare(b),
+			s => s,
+		);
+	}
+
 	public static buildFromStringList(input: Array<string>): GenericGrid<string> {
 		const gridWidth = input[0].length ;
 		const gridHeight = input.length;
@@ -125,6 +135,15 @@ export default class GenericGrid<Type> {
 			}
 		}
 	}
+	
+	public findFirst(target: Type): Coord | undefined {
+		for (let i = 0; i < this.elems.length; i++) {
+			if (this.compareFn(target, this.elems[i]) === 0) {
+				return this.coordOfIndex(i);
+			}
+		}
+		return undefined;
+	}
 
 	public inBounds(c: Coord): boolean {
 		return c.x >= 0 && c.x < this.width && c.y >= 0 && c.y < this.height;
@@ -151,5 +170,11 @@ export default class GenericGrid<Type> {
 
 	private indexC(c: Coord) {
 		return (c.y * this.width) + c.x;
+	}
+
+	private coordOfIndex(index: number): Coord {
+		const y = Math.floor(index / this.width);
+		const x = index % this.width;
+		return new Coord(x, y);
 	}
 }
