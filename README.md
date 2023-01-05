@@ -26,6 +26,7 @@ is a file containing the expected result (useful for the sample inputs/outputs i
 
 To debug through IntelliJ see 
 [this page](https://www.jetbrains.com/help/idea/running-and-debugging-typescript.html#ws_ts_run_debug_server_side_ts_node).
+To debug through VSCode, use the `.vscode/launch.json` file.
 
 Each solution is implemented as a subclass of the `Solver` class, which provides some shared functionality (e.g. logging 
 and progress bars) and a standard interface to implement. The `InputParser` static functions can be used to perform 
