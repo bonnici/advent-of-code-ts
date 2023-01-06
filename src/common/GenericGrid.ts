@@ -37,6 +37,7 @@ export default class GenericGrid<Type> {
 		);
 	}
 
+	// for quick initialisation
 	public static blankStringGrid(): GenericGrid<string> {
 		return new GenericGrid<string>(
 			1,
