@@ -11,7 +11,7 @@ class Reservoir {
 	public grid: GenericGrid<string> = GenericGrid.blankStringGrid();
 	private xOffset = 0;
 
-	constructor(private logFn: (str: any) => void) {}
+	constructor(private logFn: (str: string | number) => void) {}
 
 	public init(paths: Array<Path>) {
 		let minX = Number.MAX_SAFE_INTEGER;
