@@ -35,6 +35,11 @@ export default class Coord {
 		return new Coord(other.x - this.x, other.y - this.y);
 	}
 	
+	// Manhattan distance
+	distance(other: Coord) {
+		return Math.abs(other.x - this.x) + Math.abs(other.y - this.y);
+	}
+	
 	isValidPosition(gridWidth: number, gridHeight: number) {
 		return this.x >= 0 && this.x < gridWidth && this.y >= 0 && this.y < gridHeight;
 	}
