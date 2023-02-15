@@ -2,6 +2,8 @@
 Helper class for a DAG of a generic type.
 */
 
+import RedisSortedSet from 'redis-sorted-set';
+
 export interface GenericDagLink<KeyType> {
 	target: GenericDagNode<KeyType>;
 	cost: number;
@@ -74,6 +76,76 @@ export default class GenericDag<KeyType> {
 		toRemove.backLinks.forEach(node => node.target.forwardLinks.delete(name));
 
 		this.nodes.delete(name);
+	}
+
+	public shortestPath(from: KeyType, to: KeyType, incrementProgressFn?: () => void): number {
+		// Use dijkstra's algorithm to calculate the shortest path between two nodes.
+
+		function consider(
+			fromCost: number,
+			link: GenericDagLink<KeyType>,
+			distances: Map<KeyType, number>,
+			// eslint-disable-next-line
+			unvisitedSet: any,
+		): void {
+			const toCost = link.cost;
+			const targetCost = fromCost + toCost;
+			const toName = link.target.name;
+			if (targetCost < (distances.get(toName) || Number.MAX_SAFE_INTEGER)) {
+				distances.set(toName, targetCost);
+				unvisitedSet.add(toName, targetCost);
+			}
+		}
+
+		// Mark all nodes unvisited. Create a set of all the unvisited nodes called the unvisited set.
+		// Assign to every node a tentative distance value: set it to zero for our initial node and to infinity for all
+		// other nodes. The tentative distance of a node v is the length of the shortest path discovered so far between the
+		// node v and the starting node. Since initially no path is known to any other vertex than the source itself (which
+		// is a path of length zero), all other tentative distances are initially set to infinity. Set the initial node as
+		// current.
+		const distances: Map<KeyType, number> = new Map();
+		// eslint-disable-next-line
+		const unvisitedSet: any = new RedisSortedSet();
+
+		this.keys().forEach(key => {
+			const cost = key === from ? 0 : Number.MAX_SAFE_INTEGER;
+			unvisitedSet.add(key, cost);
+			distances.set(key, cost);
+		});
+		let current = from;
+
+		for (;;) {
+			// For the current node, consider all of its unvisited neighbors and calculate their tentative distances through
+			// the current node. Compare the newly calculated tentative distance to the current assigned value and assign the
+			// smaller one.
+			const currentNode = this.getNode(current);
+			const currentCost = distances.get(current);
+			if (!currentNode || currentCost === undefined || currentCost === Number.MAX_SAFE_INTEGER) {
+				throw `Unexpected current node ${currentNode} cost ${currentCost}`;
+			}
+
+			// If the destination node has been marked visited, then stop. The algorithm has finished.
+			if (current === to) {
+				return currentCost;
+			}
+
+			for (const link of currentNode.forwardLinks.values()) {
+				consider(currentCost, link, distances, unvisitedSet);
+			}
+
+			// When we are done considering all of the unvisited neighbors of the current node, mark the current node as
+			// visited and remove it from the unvisited set. A visited node will never be checked again.
+			unvisitedSet.rem(current);
+
+			if (incrementProgressFn) {
+				incrementProgressFn();
+			}
+
+			// Otherwise, select the unvisited node that is marked with the smallest tentative distance, set it as the new
+			// current node, and go back to step 3.
+			const bestUnvisited = unvisitedSet.range(0, 0)[0];
+			current = bestUnvisited;
+		}
 	}
 
 	public toString(): string {
