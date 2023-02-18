@@ -8,7 +8,8 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
 
-      "args": ["src/2022/day13/index.ts", "src/2022/day13/sample.p1.txt", "1", "src/2022/day13/sample.p1.expected.txt"],
+      // "args": ["src/2022/day13/index.ts", "src/2022/day13/sample.p1.txt", "1", "src/2022/day13/sample.p1.expected.txt"],
+      "args": ["src/2022/day16/index.ts", "src/2022/day16/input.txt", "1"],
       
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",
