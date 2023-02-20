@@ -251,7 +251,7 @@ class Day17Solver extends Solver {
 			while (shouldContinue) {
 				const isLeft = this.jets[this.curJetIndex];
 				this.curJetIndex = rotatingIncrement(this.curJetIndex, this.jets.length);
-				const wasPushed = chamber.pushByJet(isLeft);
+				/*const wasPushed =*/ chamber.pushByJet(isLeft);
 				shouldContinue = chamber.fallDown();
 
 				//this.sampleLog(`${wasPushed ? 'Pushed' : 'Could not be pushed'} to the ${isLeft ? 'left' : 'right'} and ${shouldContinue ? 'fell down' : 'could not fall down'}`);
