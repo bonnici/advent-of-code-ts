@@ -81,3 +81,11 @@ export function factorial(num: number): number {
 export function permutations(numObjects: number, numSelected: number): number {
 	return factorial(numObjects) / factorial(numObjects - numSelected);
 }
+
+export function rotatingIncrement(current: number, upperBound: number, amount = 1): number {
+	let result = current + amount;
+	while (result >= upperBound) {
+		result -= upperBound;
+	}
+	return result;
+}

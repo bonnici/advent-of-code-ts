@@ -68,6 +68,27 @@ export default class GenericGrid<Type> {
 
 		return grid;
 	}
+
+	public static buildFromBoolLists(input: Array<Array<boolean>>): GenericGrid<boolean> {
+		const gridWidth = input.reduce((acc, cur) => cur.length > acc ? cur.length : acc, 0);
+		const gridHeight = input.length;
+
+		const grid = new GenericGrid<boolean>(
+			gridWidth,
+			gridHeight,
+			() => false,
+			(a, b) => a === b ? 0 : 1,
+			s => s ? '#' : '.',
+		);
+		for (let i = 0; i < input.length; i++) {
+			const line = input[i];
+			for (let j = 0; j < line.length; j++) {
+				grid.set(j, i, line[j]);
+			}
+		}
+
+		return grid;
+	}
 	
 	public static buildIntsFromStringList(input: Array<string>): GenericGrid<number> {
 		const gridWidth = input[0].length ;
