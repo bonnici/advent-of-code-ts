@@ -19,11 +19,13 @@ class Day{{day}}Solver extends Solver {
 	}
 
 	protected solvePart1(): string {
-		return \`$\{'todo'}\`;
+		let result = 0;
+		return \`$\{result}\`;
 	}
 
 	protected solvePart2(): string {
-		return \`$\{'todo'}\`;
+		let result = 0;
+		return \`$\{result}\`;
 	}
 }
 
