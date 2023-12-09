@@ -8,7 +8,7 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
 
-      "args": ["src/2023/day2/index.ts", "src/2023/day2/sample.p1.txt", "1", "src/2023/day2/sample.p1.expected.txt"],
+      "args": ["src/2023/day3/index.ts", "src/2023/day3/sample.p2.txt", "2", "src/2023/day3/sample.p2.expected.txt"],
       "env": {
         "SAMPLE_FILE": "1"
       },

@@ -80,4 +80,17 @@ export default class Coord {
 		return new Coord(this.x + amount, this.y + amount);
 	}
 
+	public adjacentCoords(gridWidth: number, gridHeight: number): Array<Coord> {
+		return [
+			this.up(),
+			this.upLeft(),
+			this.upRight(),
+			this.left(),
+			this.right(),
+			this.down(),
+			this.downLeft(),
+			this.downRight(),
+		].filter(c => c.isValidPosition(gridWidth, gridHeight));
+	}
+
 }
