@@ -5,6 +5,11 @@ Helper class for a circular array of a generic type. Uses array internally so ad
 export default class CircularArray<Type> {
 	public array: Array<Type> = [];
 
+	constructor(input: Array<Type> | null = null) {
+		if (input !== null) {
+			this.array = [...input];
+		}
+	}
 
 	public insert(value: Type, index: number): void {
 		if (index < 0 || index > this.array.length) {

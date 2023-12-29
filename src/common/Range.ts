@@ -44,6 +44,16 @@ export class Range {
 		return new Range(this.start, this.endInclusive);
 	}
 
+	public intersectionWith(other: Range): Range | null {
+		if (this.endInclusive < other.start || other.endInclusive < this.start) {
+			return null;
+		}
+
+		const maxStart = Math.max(this.start, other.start);
+		const minEnd = Math.min(this.endInclusive, other.endInclusive);
+		return new Range(maxStart, minEnd);
+	}
+
 	public toString(): string {
 		return `${this.start}...${this.endInclusive}`;
 	}
