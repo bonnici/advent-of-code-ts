@@ -22,6 +22,10 @@ export class InputParser {
 		return InputParser.readLines(path).map(line => parseInt(line, 10));
 	}
 
+	public static readLinesAsIntLists(path: string): Array<Array<number>> {
+		return InputParser.readLines(path).map(line => line.split(' ').map(n => parseInt(n, 10)));
+	}
+
 	public static readLinesAsChars(path: string): string[][] {
 		return InputParser.readLines(path).map(line => line.split(''));
 	}
