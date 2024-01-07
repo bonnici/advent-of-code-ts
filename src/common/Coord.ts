@@ -8,6 +8,17 @@ x is going left from 0 to width.
 y is going down from 0 to height.
 */
 
+export enum Direction {
+	Up,
+	Down,
+	Left,
+	Right,
+	UpLeft,
+	UpRight,
+	DownLeft,
+	DownRight,
+}
+
 export default class Coord {
 	constructor(public x: number, public y: number) {}
 
@@ -80,17 +91,37 @@ export default class Coord {
 		return new Coord(this.x + amount, this.y + amount);
 	}
 
-	public adjacentCoords(gridWidth: number, gridHeight: number): Array<Coord> {
+	public followDirection(dir: Direction, amount = 1): Coord {
+		switch (dir) {
+		case Direction.Up:
+			return this.up(amount);
+		case Direction.Down:
+			return this.down(amount);
+		case Direction.Left:
+			return this.left(amount);
+		case Direction.Right:
+			return this.right(amount);
+		case Direction.UpLeft:
+			return this.upLeft(amount);
+		case Direction.UpRight:
+			return this.upRight(amount);
+		case Direction.DownLeft:
+			return this.downLeft(amount);
+		case Direction.DownRight:
+			return this.downRight(amount);
+		}
+	}
+
+	public adjacentCoords(gridWidth: number, gridHeight: number, includeDiagonals = true): Array<Coord> {
 		return [
 			this.up(),
-			this.upLeft(),
-			this.upRight(),
+			includeDiagonals ? this.upLeft() : null,
+			includeDiagonals ? this.upRight() : null,
 			this.left(),
 			this.right(),
 			this.down(),
-			this.downLeft(),
-			this.downRight(),
-		].filter(c => c.isValidPosition(gridWidth, gridHeight));
+			includeDiagonals ? this.downLeft() : null,
+			includeDiagonals ? this.downRight() : null,
+		].filter(c => c != null && c.isValidPosition(gridWidth, gridHeight)) as Array<Coord>;
 	}
-
 }
