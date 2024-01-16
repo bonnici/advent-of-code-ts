@@ -89,3 +89,18 @@ export function rotatingIncrement(current: number, upperBound: number, amount = 
 	}
 	return result;
 }
+
+// pretty inefficient
+export function binaryNumberToString(num: number, size: number): string {
+	let result = '';
+	for (let i = 0; i < size; i++) {
+		if (num % 2 > 0) {
+			result = '#' + result;
+		} else {
+			result = '.' + result;
+		}
+		num >>= 1;
+	}
+
+	return result;
+}
